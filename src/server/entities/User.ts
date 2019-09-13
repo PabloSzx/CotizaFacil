@@ -14,4 +14,8 @@ export class User {
   @Field()
   @Column()
   name: string;
+
+  @Field()
+  @Column({ default: false })
+  admin: boolean;
 }

@@ -5,10 +5,13 @@ import next from "next";
 import notifier from "node-notifier";
 
 import { apollo, common } from "./src/server";
+import { auth } from "./src/server/middleware/passport";
 
 const server = express();
 
 server.use(common);
+
+server.use(auth);
 
 apollo(server);
 
