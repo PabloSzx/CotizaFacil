@@ -1,7 +1,9 @@
 import ApolloClient from "apollo-boost";
 import App from "next/app";
+import Head from "next/head";
 import { ApolloProvider } from "react-apollo";
 
+import { AuthProvider } from "../src/client/Components/Auth/Context";
 import { withApollo } from "../src/client/utils";
 
 class MyApp extends App<{ apollo: ApolloClient<any> }> {
@@ -10,7 +12,12 @@ class MyApp extends App<{ apollo: ApolloClient<any> }> {
 
     return (
       <ApolloProvider client={apollo}>
-        <Component {...pageProps} />
+        <Head>
+          <title>Cotiza Fácil</title>
+        </Head>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
       </ApolloProvider>
     );
   }
