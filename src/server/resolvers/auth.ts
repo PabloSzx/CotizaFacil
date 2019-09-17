@@ -3,8 +3,8 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { USER_ALREADY_EXISTS, WRONG_INFO } from "../../consts";
+import { IContext } from "../../interfaces";
 import { User } from "../entities";
-import { IContext } from "../interfaces";
 
 export class AuthResolver {
   constructor(

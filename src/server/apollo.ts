@@ -1,6 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import { Express } from "express";
-import _ from "lodash";
+import { values } from "lodash";
 import { buildSchemaSync } from "type-graphql";
 import { Container as container } from "typedi";
 
@@ -9,9 +9,10 @@ import { authChecker, buildContext } from "./utils";
 
 const apolloServer = new ApolloServer({
   schema: buildSchemaSync({
-    resolvers: _.values(resolvers),
+    resolvers: values(resolvers),
     container,
     authChecker,
+    emitSchemaFile: true,
   }),
   introspection: true,
   playground: {
@@ -19,6 +20,7 @@ const apolloServer = new ApolloServer({
       "request.credentials": "include",
     },
   },
+
   context: ({ req }) => buildContext({ req }),
 });
 

@@ -1,7 +1,7 @@
 import ApolloClient, { InMemoryCache } from "apollo-boost";
 import nextWithApollo from "next-with-apollo";
 
-import { GRAPHQL_URL } from "../configs";
+import { GRAPHQL_URL } from "../../consts";
 
 declare module "next" {
   export interface NextPageContext {
