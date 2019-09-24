@@ -20,7 +20,6 @@ export const apolloServer = new ApolloServer({
       "request.credentials": "include",
     },
   },
-  mocks: process.env.NODE_ENV === "test",
   context: ({ req }) => buildContext({ req }),
 });
 

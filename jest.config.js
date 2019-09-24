@@ -38,11 +38,11 @@ module.exports = {
   // Force coverage collection from ignored files using an array of glob patterns
   // forceCoverageMatch: [],
   // A path to a module which exports an async function that is triggered once before all test suites
-  globalSetup: "./global-setup.js",
+  globalSetup: "./dev-jest-server.js",
   // A path to a module which exports an async function that is triggered once after all test suites
-  globalTeardown: "./global-setup-end.js",
+  // globalTeardown: "./global-setup-end.js",
   // A set of global variables that need to be available in all test environments
-  globals: { PORT: 5000 },
+  // globals: { },
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: "50%",
   // An array of directory names to be searched recursively up from the requiring module's location

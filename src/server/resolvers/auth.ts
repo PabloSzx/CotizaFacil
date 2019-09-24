@@ -16,6 +16,7 @@ export class AuthResolver {
     if (isAuthenticated()) {
       return user;
     }
+    return null;
   }
 
   @Mutation(() => Boolean)
