@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import express from "express";
-import next from "next";
+import proxy from "http-proxy-middleware";
 import notifier from "node-notifier";
 
 import { apollo, common } from "./src/server";
@@ -15,20 +15,18 @@ server.use(auth);
 
 apollo(server);
 
-const nextApp = next({ dev: process.env.NODE_ENV !== "production" });
-const nextHandle = nextApp.getRequestHandler();
-nextApp.prepare().then(() => {
-  server.use((req, res) => nextHandle(req, res));
+if (process.env.NODE_ENV !== "production")
+  server.use(proxy(`http://localhost:3000`));
 
-  const port = process.env.PORT || 3000;
-  server.listen({ port }, () => {
-    const message = `Server Listening on port ${port}!`;
-    console.log(message);
-    if (process.env.NODE_ENV !== "production") {
-      notifier.notify({
-        title: "🚀  Server ready",
-        message: `at http://localhost:${port}`,
-      });
-    }
-  });
+const port = process.env.PORT || 8000;
+server.listen({ port }, () => {
+  const message = `Server Listening on port ${port}!`;
+  console.log(message);
+  if (process.env.NODE_ENV !== "production") {
+    notifier.notify({
+      title: "🚀  Server ready",
+      message: `at http://localhost:${port}`,
+    });
+  }
 });
+// });
