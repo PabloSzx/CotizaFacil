@@ -1,7 +1,5 @@
-import gql from "graphql-tag";
 import { NextPage } from "next";
 import { useContext } from "react";
-import { useQuery } from "react-apollo";
 import { Button, Segment } from "semantic-ui-react";
 
 import { AuthContext } from "../src/client/Components/Auth/Context";
@@ -10,11 +8,7 @@ import SignUp from "../src/client/Components/Auth/SignUp";
 
 const Index: NextPage = () => {
   const { user, logout, loading } = useContext(AuthContext);
-  const { data } = useQuery<{ HelloWorld: string }>(gql`
-    query {
-      HelloWorld
-    }
-  `);
+
   return (
     <div>
       <div>
@@ -39,7 +33,6 @@ const Index: NextPage = () => {
           </>
         )}
       </div>
-      <div>{data && data.HelloWorld}</div>
     </div>
   );
 };
