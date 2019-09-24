@@ -7,7 +7,7 @@ import { Container as container } from "typedi";
 import * as resolvers from "./resolvers";
 import { authChecker, buildContext } from "./utils";
 
-const apolloServer = new ApolloServer({
+export const apolloServer = new ApolloServer({
   schema: buildSchemaSync({
     resolvers: values(resolvers),
     container,
@@ -20,7 +20,7 @@ const apolloServer = new ApolloServer({
       "request.credentials": "include",
     },
   },
-
+  mocks: process.env.NODE_ENV === "test",
   context: ({ req }) => buildContext({ req }),
 });
 

@@ -8,11 +8,11 @@
   "main": "index.ts",
   "scripts": {
     "build": "next build",
-    "dev": "cross-env NODE_ENV=development concurrently \"yarn dev-server\" \"next\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"yarn dev-server\" \"next\" \"ts-node -P tsconfig.local.json dev.ts\"",
     "dev-server": "ts-node-dev -r dotenv/config --respawn --ignore-watch node_modules --ignore-watch .next -P tsconfig.local.json --inspect -- index.ts",
     "start": "cross-env NODE_ENV=production \"yarn start-server\" \"next start\"",
     "start-server": "ts-node -r dotenv/config -P tsconfig.local.json -T index.ts",
-    "test": "jest",
+    "test": "jest --no-cache",
     "tsc": "tsc"
   },
   "dependencies": {
@@ -70,6 +70,7 @@
     "@types/styled-components": "^4.1.18",
     "@types/supertest": "^2.0.8",
     "@types/testing-library__react": "^9.1.1",
+    "apollo-server-testing": "^2.9.3",
     "babel-plugin-styled-components": "^1.10.6",
     "jest": "^24.9.0",
     "supertest": "^4.0.2",
