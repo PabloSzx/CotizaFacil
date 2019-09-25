@@ -20,7 +20,7 @@ export const apolloServer = new ApolloServer({
       "request.credentials": "include",
     },
   },
-  context: ({ req }) => buildContext({ req }),
+  context: ({ req, res }) => buildContext({ req, res }),
 });
 
 export const apollo = (app: Express) => {

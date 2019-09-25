@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 
 import { User } from "../entities";
 
@@ -14,7 +14,13 @@ const promisifiedLogin = <T = any, S = any>(
     })
   );
 
-export const buildContext = <OptionsType = any>({ req }: { req: Request }) => {
+export const buildContext = <OptionsType = any>({
+  req,
+  res,
+}: {
+  req: Request;
+  res: Response;
+}) => {
   return {
     login: (user: User, options?: OptionsType) =>
       promisifiedLogin(req, user, options),
@@ -22,6 +28,7 @@ export const buildContext = <OptionsType = any>({ req }: { req: Request }) => {
       if (req.session) {
         req.session.destroy(() => {});
       }
+      res.clearCookie("connect.sid");
       req.logout();
     },
     isAuthenticated: () => req.isAuthenticated(),

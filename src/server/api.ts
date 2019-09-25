@@ -3,10 +3,12 @@ import "reflect-metadata";
 import express from "express";
 import notifier from "node-notifier";
 
-import { apollo, common } from "./src/server";
-import { auth } from "./src/server/middleware/passport";
+import { apollo, common } from "./";
+import { auth } from "./middleware/passport";
 
 const server = express();
+
+server.set("trust proxy", true);
 
 server.use(common);
 
