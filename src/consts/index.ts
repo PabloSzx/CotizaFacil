@@ -1,7 +1,6 @@
-export const WRONG_INFO = "wrong_info";
-export const ADMIN = "admin";
-export const USER_ALREADY_EXISTS = "user_already_exists";
-export const GRAPHQL_URL =
-  process.env.NODE_ENV !== "production"
-    ? "http://localhost:8000/api/graphql"
-    : "/api/graphql";
+export const DOMAIN =
+  process.env.NODE_ENV === "production"
+    ? "https://cotiza-facil.pszx.tech"
+    : "http://localhost:8000";
+
+export const GRAPHQL_URL = `${DOMAIN}/api/graphql`;

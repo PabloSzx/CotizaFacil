@@ -1,0 +1,36 @@
+name: Build Image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup PostgreSQL
+        uses: Harmon758/postgresql-action@v1.0.0
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: test
+        run: |
+          yarn
+          yarn tsc
+          yarn build
+          yarn test
+        env:
+          CI: true
+          COOKIE_KEY: "Kl95nHDM1pmj"
+
+      - name: Publish Docker Client
+        uses: elgohr/Publish-Docker-Github-Action@1.13
+        with:
+          name: pabloszx/awesome-templates-client
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          cache: true

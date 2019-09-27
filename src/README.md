@@ -1,19 +1,11 @@
 # src
 
-Folder that contains all the source code, and therefore, the subfolders of code needed for the web application.
+This folder contains the client side source code _(except the path/pages exclusive code, which is in **/pages** directory)_.
 
-## client
+## Components
 
-Client side source code directory.
+React Components folders
 
-## consts
+## utils
 
-Constants used across the web application.
-
-## interfaces
-
-TypeScript definitions.
-
-## server
-
-Server side code directory.
+Client side exclusive utility functions.

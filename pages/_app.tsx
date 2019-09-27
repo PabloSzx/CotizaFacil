@@ -3,8 +3,8 @@ import App from "next/app";
 import Head from "next/head";
 import { ApolloProvider } from "react-apollo";
 
-import { AuthProvider } from "../src/client/Components/Auth/Context";
-import { withApollo } from "../src/client/utils";
+import { AuthProvider } from "../src/Components/Auth/Context";
+import { withApollo } from "../src/utils";
 
 class MyApp extends App<{ apollo: ApolloClient<any> }> {
   render() {

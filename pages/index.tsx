@@ -2,9 +2,9 @@ import { NextPage } from "next";
 import { useContext } from "react";
 import { Button, Segment } from "semantic-ui-react";
 
-import { AuthContext } from "../src/client/Components/Auth/Context";
-import Login from "../src/client/Components/Auth/Login";
-import SignUp from "../src/client/Components/Auth/SignUp";
+import { AuthContext } from "../src/Components/Auth/Context";
+import Login from "../src/Components/Auth/Login";
+import SignUp from "../src/Components/Auth/SignUp";
 
 const Index: NextPage = () => {
   const { user, logout, loading } = useContext(AuthContext);

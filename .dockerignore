@@ -1,0 +1,8 @@
+.env
+dev.ts
+ormlogs.log
+schema.gql
+node_modules
+.next
+__tests__
+.vscode
