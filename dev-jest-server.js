@@ -8,7 +8,7 @@ module.exports = async function globalSetup() {
       global.open = true;
 
       await setupDevServer({
-        command: `yarn server-test`,
+        command: `yarn api-test`,
         launchTimeout: 50000,
         port: process.env.PORT || 9999,
         waitOnScheme: {
