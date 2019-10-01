@@ -1,6 +1,6 @@
-# Server directory
+# API Server directory
 
-Other than containing the subfolders for the server, it contains a specific file that works as **_"main"_**:
+Other than containing the subfolders for the API, it contains a couple of specific files.
 
 ## apollo
 
