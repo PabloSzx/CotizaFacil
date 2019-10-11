@@ -33,7 +33,7 @@ jobs:
       - name: Publish Docker Client
         uses: elgohr/Publish-Docker-Github-Action@1.13
         with:
-          name: pabloszx/awesome-templates-client
+          name: pabloszx/cotiza-facil
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           cache: true
