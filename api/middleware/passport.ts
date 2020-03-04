@@ -9,7 +9,7 @@ import { WRONG_INFO } from "../consts";
 import { connection } from "../db";
 import { Session, User } from "../entities";
 
-const { COOKIE_KEY } = requireEnv(["COOKIE_KEY"]);
+const { COOKIE_KEY } = requireEnv("COOKIE_KEY");
 export const auth = Router();
 
 function SessionMiddleware(repository: Repository<Session>) {
@@ -19,7 +19,7 @@ function SessionMiddleware(repository: Repository<Session>) {
     saveUninitialized: false,
     rolling: true,
     cookie: { maxAge: 86400000, secure: false },
-    store: new TypeormStore({ repository }),
+    store: new TypeormStore({ repository })
   });
 }
 

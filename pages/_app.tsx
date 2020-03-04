@@ -3,7 +3,10 @@ import App from "next/app";
 import Head from "next/head";
 import { ApolloProvider } from "react-apollo";
 
+import { theme, ThemeProvider } from "@chakra-ui/core";
+
 import { AuthProvider } from "../src/Components/Auth/Context";
+import { Navigation } from "../src/Components/Navigation";
 import { withApollo } from "../src/utils";
 
 class MyApp extends App<{ apollo: ApolloClient<any> }> {
@@ -15,9 +18,13 @@ class MyApp extends App<{ apollo: ApolloClient<any> }> {
         <Head>
           <title>Cotiza Fácil</title>
         </Head>
-        <AuthProvider>
-          <Component {...pageProps} />
-        </AuthProvider>
+        <ThemeProvider theme={theme}>
+          <AuthProvider>
+            <Navigation />
+
+            <Component {...pageProps} />
+          </AuthProvider>
+        </ThemeProvider>
       </ApolloProvider>
     );
   }
