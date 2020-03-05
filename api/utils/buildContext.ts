@@ -16,7 +16,7 @@ const promisifiedLogin = <T = any, S = any>(
 
 export const buildContext = <OptionsType = any>({
   req,
-  res,
+  res
 }: {
   req: Request;
   res: Response;
@@ -33,8 +33,8 @@ export const buildContext = <OptionsType = any>({
     },
     isAuthenticated: () => req.isAuthenticated(),
     isUnauthenticated: () => req.isUnauthenticated(),
-    get user(): User {
-      return req.user;
-    },
+    get user(): User | undefined {
+      return req.user as User | undefined;
+    }
   };
 };

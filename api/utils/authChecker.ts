@@ -14,7 +14,7 @@ export const authChecker: AuthChecker<IContext> = async (
   for (const role of roles) {
     switch (role) {
       case ADMIN: {
-        if (!user.admin) return false;
+        if (!user?.admin) return false;
         continue;
       }
       default:
