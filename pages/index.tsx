@@ -1,25 +1,10 @@
 import { NextPage } from "next";
-import { FC } from "react";
-import { Icon, Table } from "semantic-ui-react";
 
-import { Box, Button, Divider, Image, Input, Stack } from "@chakra-ui/core";
+import { Box, Divider, Input, Stack } from "@chakra-ui/core";
 
-const Row: FC<{ name: string; price: string; image?: string }> = ({
-  name,
-  price,
-  image = "/static/image_placeholder.png"
-}) => {
-  return (
-    <Table.Row>
-      <Table.Cell>{name}</Table.Cell>
-      <Table.Cell>{price}</Table.Cell>
-      <Table.Cell>Sodimac</Table.Cell>
-      <Table.Cell textAlign="center">
-        <Image width="100px" src={image} />
-      </Table.Cell>
-    </Table.Row>
-  );
-};
+import mockData from "../mockData.json";
+import { ProductRow } from "../src/Components/Product";
+import { StoreSelection } from "../src/Components/StoreSelection";
 
 const Index: NextPage = () => {
   return (
@@ -30,32 +15,26 @@ const Index: NextPage = () => {
             <Input placeholder="martillo..." />
           </Box>
           <Box>
-            <Button>Tiendas</Button>
+            <StoreSelection />
           </Box>
         </Stack>
       </Box>
       <Divider />
       <Divider />
-      <Box>
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Nombre</Table.HeaderCell>
-              <Table.HeaderCell>Precio ($)</Table.HeaderCell>
-              <Table.HeaderCell>Tienda</Table.HeaderCell>
-              <Table.HeaderCell>Imagen</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            <Row
-              name="Ubermann Martillo carpintero 16 Oz acero"
-              price="$9.580"
+      <Stack justifyContent="center">
+        {mockData.products.map((productValue, key) => {
+          return (
+            <ProductRow
+              key={key}
+              product={productValue}
+              marginLeft="10px"
+              marginRight="10px"
+              paddingLeft="10px"
+              paddingRight="10px"
             />
-            <Row name="Martillo carpintero 0,68kg Robust" price="$9.190" />
-          </Table.Body>
-        </Table>
-      </Box>
+          );
+        })}
+      </Stack>
     </Stack>
   );
 };

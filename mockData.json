@@ -1,0 +1,17 @@
+{
+  "stores": ["Sodimac", "Easy"],
+  "products": [
+    {
+      "name": "Ubermann Martillo carpintero 16 Oz acero",
+      "price": "$9.580",
+      "store": "Sodimac",
+      "image": "/martillo.jpeg"
+    },
+    {
+      "name": "Martillo carpintero 0,68kg Robust",
+      "price": "$9.190",
+      "store": "Easy",
+      "image": "/martillo.jpeg"
+    }
+  ]
+}
