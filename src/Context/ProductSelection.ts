@@ -1,4 +1,4 @@
-import { createStore } from "react-state-selector";
+import { createSelector, createStore } from "react-state-selector";
 
 export type IProduct = {
   name: string;
@@ -24,7 +24,15 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
     },
     useIsStoreSelected: ({ storesSelected }, store: string) => {
       return !!storesSelected[store];
-    }
+    },
+    useStoresSelected: createSelector(
+      ({ storesSelected }) => {
+        return storesSelected;
+      },
+      storesSelected => {
+        return Object.keys(storesSelected);
+      }
+    )
   },
   actions: {
     toggleProductSelected: (product: string) => draft => {

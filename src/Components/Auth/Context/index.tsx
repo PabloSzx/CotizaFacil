@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import { createContext, FC, useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-apollo";
+
+import { useMutation, useQuery } from "@apollo/react-hooks";
 
 export type IAuthenticatedUser = {
   email: string;
@@ -26,7 +27,7 @@ export const AuthContext = createContext<{
   login: async () => ({ email: "", name: "", admin: false }),
   logout: async () => null,
   signUp: async () => ({ email: "", name: "", admin: false }),
-  loading: false,
+  loading: false
 });
 
 export const AuthProvider: FC = ({ children }) => {
@@ -46,7 +47,7 @@ export const AuthProvider: FC = ({ children }) => {
       }
     `,
     {
-      ssr: false,
+      ssr: false
     }
   );
 
@@ -96,14 +97,14 @@ export const AuthProvider: FC = ({ children }) => {
 
   const login = async ({
     email,
-    password,
+    password
   }: {
     email: string;
     password: string;
   }) => {
     try {
       const { data, errors } = await doLogin({
-        variables: { email, password },
+        variables: { email, password }
       });
       if (errors && errors.length > 0)
         throw new Error(errors.map(v => v.message).join("|"));
@@ -136,7 +137,7 @@ export const AuthProvider: FC = ({ children }) => {
   const signUp = async ({
     email,
     password,
-    name,
+    name
   }: {
     email: string;
     password: string;
@@ -144,7 +145,7 @@ export const AuthProvider: FC = ({ children }) => {
   }) => {
     try {
       const { data, errors } = await doSignUp({
-        variables: { email, password, name },
+        variables: { email, password, name }
       });
       if (errors && errors.length > 0)
         throw new Error(errors.map(v => v.message).join("|"));
@@ -167,7 +168,7 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         login,
         logout,
-        signUp,
+        signUp
       }}
     >
       {children}

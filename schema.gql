@@ -3,14 +3,48 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input CreateStoreInput {
+  name: String!
+  url: String!
+  image: String!
+}
+
+input EditStoreInput {
+  oldName: String!
+  name: String
+  url: String
+  image: String
+}
+
 type Mutation {
   logout: Boolean!
   login(password: String!, email: String!): User
   sign_up(name: String!, password: String!, email: String!): User
+  upsertStore(store: CreateStoreInput!): Store!
+  editStore(store: EditStoreInput!): Store!
+  removeStore(storeName: String!): Store!
+  searchProduct(storeNames: [String!]!, productName: String!): [Product!]!
+}
+
+type Product {
+  name: String!
+  price: String!
+  url: String!
+  image: String!
+  store: Store!
 }
 
 type Query {
   current_user: User
+  stores: [Store!]!
+  allProducts: [Product!]!
+}
+
+type Store {
+  name: String!
+  url: String!
+  image: String!
+  active: Boolean!
 }
 
 type User {

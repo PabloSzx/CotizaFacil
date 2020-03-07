@@ -5,13 +5,15 @@
       "name": "Ubermann Martillo carpintero 16 Oz acero",
       "price": "$9.580",
       "store": "Sodimac",
-      "image": "/martillo.jpeg"
+      "image": "/martillo.jpeg",
+      "url": "https://www.sodimac.cl/sodimac-cl/product/3674967/Martillo-mini-8-Oz/3674967"
     },
     {
       "name": "Martillo carpintero 0,68kg Robust",
       "price": "$9.190",
       "store": "Easy",
-      "image": "/martillo.jpeg"
+      "image": "/martillo.jpeg",
+      "url": "https://www.sodimac.cl/sodimac-cl/product/3569357/Martillo-20-oz-mango-ergonomico/3569357"
     }
   ]
 }

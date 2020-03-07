@@ -10,15 +10,16 @@ const dbConfig: ConnectionOptions = {
   ...(process.env.DB_URL
     ? {
         url: process.env.DB_URL,
-        database: process.env.DB_DATABASE || "cotiza-facil",
+        database: process.env.DB_DATABASE || "cotiza-facil"
       }
     : {
         username: process.env.DB_USERNAME || "postgres",
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE || "postgres",
-        port: parseInt(process.env.DB_PORT || "") || 5432,
+        port: parseInt(process.env.DB_PORT || "") || 5432
       }),
   synchronize: true,
+  logging: ["error", "info", "warn"]
 };
 
 useContainer(Container);

@@ -1,8 +1,8 @@
 import ApolloClient from "apollo-boost";
 import App from "next/app";
 import Head from "next/head";
-import { ApolloProvider } from "react-apollo";
 
+import { ApolloProvider } from "@apollo/react-hooks";
 import { theme, ThemeProvider } from "@chakra-ui/core";
 
 import { AuthProvider } from "../src/Components/Auth/Context";

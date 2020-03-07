@@ -13,19 +13,20 @@ export const apolloServer = new ApolloServer({
     container,
     authChecker,
     emitSchemaFile: true,
+    validate: true
   }),
   introspection: true,
   playground: {
     settings: {
-      "request.credentials": "include",
-    },
+      "request.credentials": "include"
+    }
   },
-  context: ({ req, res }) => buildContext({ req, res }),
+  context: ({ req, res }) => buildContext({ req, res })
 });
 
 export const apollo = (app: Express) => {
   apolloServer.applyMiddleware({
     app,
-    path: "/api/graphql",
+    path: "/api/graphql"
   });
 };
