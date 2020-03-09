@@ -1,16 +1,18 @@
 import gql, { DocumentNode } from "graphql-tag-ts";
 
+export type IProductQuery = {
+  name: string;
+  price: string;
+  image: string;
+  url: string;
+  store: {
+    name: string;
+  };
+};
+
 export const SEARCH_PRODUCT: DocumentNode<
   {
-    searchProduct: {
-      name: string;
-      price: string;
-      image: string;
-      url: string;
-      store: {
-        name: string;
-      };
-    }[];
+    searchProduct: IProductQuery[];
   },
   { productName: string; storeNames: string[] }
 > = gql`

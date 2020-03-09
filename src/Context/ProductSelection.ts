@@ -35,6 +35,11 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
     )
   },
   actions: {
+    setInitialSelectedStores: (stores: string[]) => draft => {
+      for (const store of stores) {
+        draft.storesSelected[store] = true;
+      }
+    },
     toggleProductSelected: (product: string) => draft => {
       if (draft.productsChecked[product]) {
         delete draft.productsChecked[product];

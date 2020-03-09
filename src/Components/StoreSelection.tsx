@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, memo, useCallback, useEffect } from "react";
 import { Checkbox } from "semantic-ui-react";
 
 import { useQuery } from "@apollo/react-hooks";
@@ -29,10 +29,18 @@ const StoreRow: FC<{ name: string }> = ({ name }) => {
   );
 };
 
-export const StoreSelection: FC = () => {
+export const StoreSelection: FC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure(false);
 
   const { loading, data } = useQuery(ALL_STORES);
+
+  useEffect(() => {
+    if (data?.stores) {
+      ProductSelectionStore.actions.setInitialSelectedStores(
+        data.stores.map(({ name }) => name)
+      );
+    }
+  }, [data]);
   return (
     <>
       <Button onClick={onOpen} isDisabled={loading} isLoading={loading}>
@@ -50,4 +58,4 @@ export const StoreSelection: FC = () => {
       </Modal>
     </>
   );
-};
+});
