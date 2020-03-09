@@ -16,6 +16,8 @@ const initialProductSelection: IProductSelection = {
   storesSelected: {}
 };
 
+const rememberStoresSelectedKey = "CotizaFacilStoresSelected";
+
 export const ProductSelectionStore = createStore(initialProductSelection, {
   devName: "ProductSelection",
   hooks: {
@@ -36,8 +38,19 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
   },
   actions: {
     setInitialSelectedStores: (stores: string[]) => draft => {
-      for (const store of stores) {
-        draft.storesSelected[store] = true;
+      try {
+        const localStoresSelected = localStorage.getItem(
+          rememberStoresSelectedKey
+        );
+        if (localStoresSelected) {
+          draft.storesSelected = JSON.parse(localStoresSelected);
+        } else {
+          throw undefined;
+        }
+      } catch (err) {
+        for (const store of stores) {
+          draft.storesSelected[store] = true;
+        }
       }
     },
     toggleProductSelected: (product: string) => draft => {
@@ -53,6 +66,12 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
       } else {
         draft.storesSelected[product] = true;
       }
+      try {
+        localStorage.setItem(
+          rememberStoresSelectedKey,
+          JSON.stringify(draft.storesSelected)
+        );
+      } catch (err) {}
     }
   }
 });
