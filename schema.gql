@@ -9,6 +9,11 @@ input CreateStoreInput {
   image: String!
 }
 
+"""
+The javascript `Date` as string. Type represents date and time as the ISO Date string.
+"""
+scalar DateTime
+
 input EditStoreInput {
   oldName: String!
   name: String
@@ -31,6 +36,7 @@ type Product {
   price: String!
   url: String!
   image: String!
+  updatedDate: DateTime!
   store: Store!
 }
 
@@ -38,6 +44,14 @@ type Query {
   current_user: User
   stores: [Store!]!
   allProducts: [Product!]!
+}
+
+type Quotation {
+  id: Float!
+  user: User!
+  name: String!
+  date: DateTime!
+  products: [Product!]!
 }
 
 type Store {

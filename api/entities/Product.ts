@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 
+import { Quotation } from "./Quotation";
 import { Store } from "./Store";
 
 @Entity()
@@ -22,6 +23,10 @@ export class Product {
   @Column()
   image: string;
 
+  @Field()
+  @Column()
+  updatedDate: Date;
+
   @ManyToOne(
     () => Store,
     store => store.name,
@@ -31,4 +36,10 @@ export class Product {
   )
   @Field(() => Store)
   store: Store;
+
+  @ManyToMany(
+    () => Quotation,
+    quotation => quotation.products
+  )
+  quotations: Quotation[];
 }
