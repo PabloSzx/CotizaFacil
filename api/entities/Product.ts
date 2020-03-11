@@ -24,7 +24,7 @@ export class Product {
   image: string;
 
   @Field()
-  @Column()
+  @Column({ default: () => "CURRENT_TIMESTAMP" })
   updatedDate: Date;
 
   @ManyToOne(

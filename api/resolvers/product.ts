@@ -53,7 +53,8 @@ export class ProductResolver {
         })}`,
         image:
           "https://sodimac.scene7.com/is/image/SodimacCL/3569357?fmt=jpg&fit=constrain,1&wid=712&hei=712",
-        store: sample(stores)
+        store: sample(stores),
+        updatedDate: new Date()
       });
     });
 
