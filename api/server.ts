@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "./scrapping/sodimac";
 
 import express from "express";
 import notifier from "node-notifier";
@@ -26,7 +27,7 @@ try {
       if (process.env.NODE_ENV !== "production") {
         notifier.notify({
           title: "🚀  API Server ready",
-          message: `at http://localhost:${port}`,
+          message: `at http://localhost:${port}`
         });
       }
     })
