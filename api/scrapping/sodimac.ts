@@ -1,6 +1,9 @@
+import { uniqBy } from "lodash";
 import puppeteer from "puppeteer";
 
 const browser = puppeteer.launch();
+
+const pageLimit = 5;
 
 const sodimacWebsite = "https://www.sodimac.cl";
 
@@ -14,10 +17,16 @@ const sodimacUrl = ({
   return `${sodimacWebsite}/sodimac-cl/search?Ntt=${name}&currentpage=${pageNumber}`;
 };
 
+interface IProduct {
+  name: string;
+  price: string;
+  url: string;
+  image: string;
+}
 export const getSodimacData = async (name: string) => {
   const page = await (await browser).newPage();
 
-  const products: { content: string; price: string }[] = [];
+  const products: IProduct[] = [];
 
   const getPageData = async (pageNumber = 1) => {
     await page.goto(
@@ -35,11 +44,7 @@ export const getSodimacData = async (name: string) => {
         ".page-indicies .page-index .jsx-4278284191 "
       );
 
-      const products: {
-        content: string;
-        price: string;
-        link: string;
-      }[] = [];
+      const products: IProduct[] = [];
 
       const totalPages = Number(
         $pagination[$pagination.length - 1]?.textContent?.trim()
@@ -52,22 +57,34 @@ export const getSodimacData = async (name: string) => {
         );
         const priceSelector = $product.querySelector(".product .price");
         const linkSelector = $product.querySelector(".link-primary");
-        if (!titleSelector || !priceSelector || !linkSelector) {
+        const imageSelector = $product.querySelector("img");
+        if (
+          !titleSelector ||
+          !priceSelector ||
+          !linkSelector ||
+          !imageSelector
+        ) {
           return;
         }
 
         log += ``;
 
         const productData = {
-          content: titleSelector.textContent?.trim() ?? "",
+          name: titleSelector.textContent?.trim() ?? "",
           price: priceSelector.textContent?.trim() ?? "",
-          link: linkSelector.getAttribute("href") ?? ""
+          url: linkSelector.getAttribute("href") ?? "",
+          image: imageSelector.getAttribute("src") ?? ""
         };
 
-        if (productData.content && productData.price && productData.link) {
+        if (
+          productData.name &&
+          productData.price &&
+          productData.url &&
+          productData.image
+        ) {
           products.push({
             ...productData,
-            link: `${sodimacWebsite}${productData.link}`
+            url: `https://www.sodimac.cl${productData.url}`
           });
         }
       });
@@ -83,7 +100,7 @@ export const getSodimacData = async (name: string) => {
     totalPages = data.totalPages;
     products.push(...data.products);
 
-    if (pageNumber < totalPages) {
+    if (pageNumber < totalPages && pageNumber < pageLimit) {
       await getPageData(pageNumber + 1);
     }
   };
@@ -92,11 +109,13 @@ export const getSodimacData = async (name: string) => {
 
   await page.close();
 
-  return products;
+  const uniqProducts = uniqBy(products, product => product.url);
+
+  return uniqProducts;
 };
 
-getSodimacData("martillo").then(data => {
-  console.log({
-    data
-  });
-});
+// getSodimacData("martillo").then(data => {
+//   console.log({
+//     data
+//   });
+// });

@@ -25,7 +25,7 @@ export class Product {
 
   @Field()
   @Column({ default: () => "CURRENT_TIMESTAMP" })
-  updatedDate: Date;
+  updated_date: Date;
 
   @ManyToOne(
     () => Store,

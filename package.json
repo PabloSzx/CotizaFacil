@@ -8,10 +8,10 @@
   "scripts": {
     "build": "next build",
     "dev": "cross-env NODE_ENV=development concurrently \"yarn dev-api\" \"next\" \"ts-node -P tsconfig.local.json dev.ts\"",
-    "dev-api": "ts-node-dev -r dotenv/config --respawn --ignore-watch node_modules --ignore-watch .next -P tsconfig.local.json --inspect -- api/server.ts",
+    "dev-api": "ts-node-dev --respawn --ignore-watch node_modules --ignore-watch .next -P tsconfig.local.json --inspect -- api/server.ts",
     "api-test": "cross-env COOKIE_KEY=6Q1HiK ts-node-dev --respawn --ignore-watch node_modules --ignore-watch .next -P tsconfig.local.json api/server.ts",
     "start": "cross-env NODE_ENV=production concurrently \"yarn start-api\" \"next start -p 6001\"",
-    "start-api": "ts-node -r dotenv/config -P tsconfig.local.json -T api/server.ts",
+    "start-api": "ts-node -P tsconfig.local.json -T api/server.ts",
     "test": "cross-env NODE_ENV=test PORT=9999 jest --detectOpenHandles --forceExit",
     "tsc": "tsc --noEmit"
   },

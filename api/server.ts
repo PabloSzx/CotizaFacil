@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import "./scrapping/sodimac";
+import "dotenv/config";
 
 import express from "express";
 import notifier from "node-notifier";

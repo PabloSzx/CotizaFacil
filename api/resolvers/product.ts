@@ -1,12 +1,12 @@
 import assert from "assert";
-import { range, sample } from "lodash";
-import { generate } from "randomstring";
+import { sample } from "lodash";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { In, Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { Store } from "../entities";
 import { Product } from "../entities/Product";
+import { getSodimacData } from "../scrapping/sodimac";
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -32,33 +32,29 @@ export class ProductResolver {
 
     assert(stores.length > 0, new Error("Stores not found!"));
 
-    const n = Math.round(Math.random() * 10) + 1;
-
-    const products = range(0, n).map(() => {
+    const products = (await getSodimacData(productName)).map(product => {
       return this.ProductRepository.create({
-        name:
-          productName +
-          generate({
-            readable: true,
-            length: 10,
-            charset: "alphabetic"
-          }),
-        price: `$${generate({
-          length: 5,
-          charset: "numeric"
-        })}`,
-        url: `https://www.sodimac.cl/sodimac-cl/product/${generate({
-          length: 7,
-          charset: "numeric"
-        })}`,
-        image:
-          "https://sodimac.scene7.com/is/image/SodimacCL/3569357?fmt=jpg&fit=constrain,1&wid=712&hei=712",
+        ...product,
         store: sample(stores),
-        updatedDate: new Date()
+        updated_date: new Date()
       });
     });
 
-    return await this.ProductRepository.save(products);
+    if (products.length === 0) {
+      return [];
+    }
+
+    await this.ProductRepository.createQueryBuilder()
+      .insert()
+      .values(products)
+      .updateEntity(true)
+      .onConflict(
+        `(url) DO UPDATE SET name = EXCLUDED.name, price = EXCLUDED.price, image = EXCLUDED.image, updated_date = EXCLUDED.updated_date`
+      )
+      .returning("*")
+      .execute();
+
+    return products;
   }
 
   @Query(() => [Product])
