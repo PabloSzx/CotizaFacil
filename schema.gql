@@ -4,9 +4,9 @@
 # -----------------------------------------------
 
 input CreateStoreInput {
+  image: String!
   name: String!
   url: String!
-  image: String!
 }
 
 """
@@ -15,54 +15,46 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 scalar DateTime
 
 input EditStoreInput {
-  oldName: String!
-  name: String
-  url: String
   image: String
+  name: String
+  oldName: String!
+  url: String
 }
 
 type Mutation {
-  logout: Boolean!
-  login(password: String!, email: String!): User
-  sign_up(name: String!, password: String!, email: String!): User
-  upsertStore(store: CreateStoreInput!): Store!
   editStore(store: EditStoreInput!): Store!
+  login(email: String!, password: String!): User
+  logout: Boolean!
   removeStore(storeName: String!): Store!
-  searchProduct(storeNames: [String!]!, productName: String!): [Product!]!
+  searchProduct(productName: String!, storeNames: [String!]!): [Product!]!
+  sign_up(email: String!, name: String!, password: String!): User
+  upsertStore(store: CreateStoreInput!): Store!
 }
 
 type Product {
+  image: String!
   name: String!
   price: String!
-  url: String!
-  image: String!
-  updated_date: DateTime!
   store: Store!
+  updated_date: DateTime!
+  url: String!
 }
 
 type Query {
+  allProducts: [Product!]!
   current_user: User
   stores: [Store!]!
-  allProducts: [Product!]!
-}
-
-type Quotation {
-  id: Float!
-  user: User!
-  name: String!
-  date: DateTime!
-  products: [Product!]!
 }
 
 type Store {
+  active: Boolean!
+  image: String!
   name: String!
   url: String!
-  image: String!
-  active: Boolean!
 }
 
 type User {
+  admin: Boolean!
   email: String!
   name: String!
-  admin: Boolean!
 }

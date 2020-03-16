@@ -9,7 +9,7 @@ import { authChecker, buildContext } from "./utils";
 
 export const apolloServer = new ApolloServer({
   schema: buildSchemaSync({
-    resolvers: values(resolvers),
+    resolvers: values(resolvers) as any,
     container,
     authChecker,
     emitSchemaFile: true,

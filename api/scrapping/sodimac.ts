@@ -114,6 +114,15 @@ export const getSodimacData = async (name: string) => {
   return uniqProducts;
 };
 
+const closeBrowser = async () => {
+  (await browser).close();
+};
+
+process.on("exit", closeBrowser);
+process.on("SIGINT", closeBrowser);
+process.on("SIGUSR1", closeBrowser);
+process.on("SIGUSR2", closeBrowser);
+
 // getSodimacData("martillo").then(data => {
 //   console.log({
 //     data

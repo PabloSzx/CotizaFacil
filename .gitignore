@@ -2,3 +2,4 @@ node_modules
 .next
 ormlogs.log
 .env
+dist
