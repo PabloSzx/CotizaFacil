@@ -1,6 +1,8 @@
 import { uniqBy } from "lodash";
 import puppeteer from "puppeteer";
 
+import { IProduct } from "../interfaces";
+
 const browser = puppeteer.launch();
 
 const pageLimit = 5;
@@ -17,12 +19,6 @@ const sodimacUrl = ({
   return `${sodimacWebsite}/sodimac-cl/search?Ntt=${name}&currentpage=${pageNumber}`;
 };
 
-interface IProduct {
-  name: string;
-  price: string;
-  url: string;
-  image: string;
-}
 export const getSodimacData = async (name: string) => {
   const page = await (await browser).newPage();
 
