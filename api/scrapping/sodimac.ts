@@ -3,7 +3,10 @@ import puppeteer from "puppeteer";
 
 import { IProduct } from "../interfaces";
 
-const browser = puppeteer.launch();
+const browser = puppeteer.launch({
+  executablePath: process.env.CHROME_BIN,
+  args: ["--no-sandbox"]
+});
 
 const pageLimit = 5;
 
