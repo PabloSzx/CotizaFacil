@@ -1,11 +1,38 @@
-import { FC, useContext, useState } from "react";
+import gql, { DocumentNode } from "graphql-tag-ts";
+import { FC, useState } from "react";
 import { Form, Header, Input, Label } from "semantic-ui-react";
 
-import { AuthContext } from "../Context";
+import { useMutation } from "@apollo/react-hooks";
+
+import { ErrorGQLAlert } from "../../ErrorGQLAlert";
+import { currentUserGQL, IAuthenticatedUser } from "../Context";
+
+const loginGQL: DocumentNode<
+  { login: IAuthenticatedUser },
+  { email: string; password: string }
+> = gql`
+  mutation($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      email
+      name
+      admin
+    }
+  }
+`;
 
 const Login: FC = () => {
-  const { login, loading } = useContext(AuthContext);
-
+  const [login, { loading, error }] = useMutation(loginGQL, {
+    update: (cache, data) => {
+      if (data.data?.login) {
+        cache.writeQuery({
+          query: currentUserGQL,
+          data: {
+            current_user: data.data.login
+          }
+        });
+      }
+    }
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,11 +40,12 @@ const Login: FC = () => {
     <Form
       onSubmit={ev => {
         ev.preventDefault();
-        login({ email, password });
+        login({ variables: { email, password } });
       }}
     >
       <Header as="h1">Login</Header>
 
+      <ErrorGQLAlert error={error} />
       <Form.Field>
         <Label>Email</Label>
         <Input

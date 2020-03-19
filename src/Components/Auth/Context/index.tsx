@@ -1,5 +1,14 @@
+import { ApolloError } from "apollo-client";
 import gql from "graphql-tag";
-import { createContext, FC, useEffect, useRef, useState } from "react";
+import { DocumentNode } from "graphql-tag-ts";
+import {
+  createContext,
+  FC,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useMutation, useQuery } from "@apollo/react-hooks";
 
@@ -11,123 +20,76 @@ export type IAuthenticatedUser = {
 
 export const AuthContext = createContext<{
   user: IAuthenticatedUser | null;
-  login: (data: {
-    email: string;
-    password: string;
-  }) => Promise<IAuthenticatedUser>;
   logout: () => Promise<null>;
-  signUp: (data: {
-    email: string;
-    password: string;
-    name: string;
-  }) => Promise<IAuthenticatedUser>;
   loading: boolean;
   firstLoading: boolean;
+  error?: ApolloError;
 }>({
   user: null,
-  login: async () => ({ email: "", name: "", admin: false }),
   logout: async () => null,
-  signUp: async () => ({ email: "", name: "", admin: false }),
   loading: true,
   firstLoading: true
 });
+
+export const currentUserGQL: DocumentNode<{
+  current_user: IAuthenticatedUser;
+}> = gql`
+  query {
+    current_user {
+      email
+      name
+      admin
+    }
+  }
+`;
 
 export const AuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<IAuthenticatedUser | null>(null);
   const [loading, setLoading] = useState(true);
   const stateRef = useRef({ firstLoading: true });
 
-  const { loading: loadingCurrentUser, data } = useQuery<{
-    current_user: IAuthenticatedUser;
+  const {
+    loading: loadingCurrentUser,
+    data,
+    error: errorCurrentUser
+  } = useQuery(currentUserGQL, {
+    ssr: false
+  });
+
+  const [
+    doLogout,
+    { loading: loadingLogout, error: errorLogout }
+  ] = useMutation<{
+    logout: boolean;
   }>(
     gql`
-      query {
-        current_user {
-          email
-          name
-          admin
-        }
+      mutation {
+        logout
       }
     `,
     {
-      ssr: false
+      update: cache => {
+        cache.writeQuery({
+          query: currentUserGQL,
+          data: { current_user: null }
+        });
+      }
     }
   );
 
-  const [doLogin, { loading: loadingLogin }] = useMutation<
-    { login: IAuthenticatedUser },
-    { email: string; password: string }
-  >(gql`
-    mutation($email: String!, $password: String!) {
-      login(email: $email, password: $password) {
-        email
-        name
-        admin
-      }
-    }
-  `);
-
-  const [doSignUp, { loading: loadingSignUp }] = useMutation<
-    { sign_up: IAuthenticatedUser },
-    { email: string; password: string; name: string }
-  >(gql`
-    mutation($email: String!, $password: String!, $name: String!) {
-      sign_up(email: $email, password: $password, name: $name) {
-        email
-        name
-        admin
-      }
-    }
-  `);
-
-  const [doLogout, { loading: loadingLogout }] = useMutation<{
-    logout: boolean;
-  }>(gql`
-    mutation {
-      logout
-    }
-  `);
-
   useEffect(() => {
-    const isLoading =
-      loadingCurrentUser || loadingLogin || loadingSignUp || loadingLogout;
+    const isLoading = loadingCurrentUser || loadingLogout;
     setLoading(isLoading);
     if (!isLoading) {
       stateRef.current.firstLoading = false;
     }
-  }, [loadingCurrentUser, loadingLogin, loadingSignUp, loadingLogout]);
+  }, [loadingCurrentUser, loadingLogout]);
 
   useEffect(() => {
     if (!loadingCurrentUser && data) setUser(data.current_user);
   }, [loadingCurrentUser, data]);
 
-  const login = async ({
-    email,
-    password
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    try {
-      const { data, errors } = await doLogin({
-        variables: { email, password }
-      });
-      if (errors && errors.length > 0)
-        throw new Error(errors.map(v => v.message).join("|"));
-
-      if (data) {
-        setUser(data.login);
-
-        return data.login;
-      }
-      throw new Error("Data Not Found!");
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
-
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       const { data, errors } = await doLogout();
       if (errors && errors.length > 0)
@@ -138,43 +100,15 @@ export const AuthProvider: FC = ({ children }) => {
       throw err;
     }
     return null;
-  };
-
-  const signUp = async ({
-    email,
-    password,
-    name
-  }: {
-    email: string;
-    password: string;
-    name: string;
-  }) => {
-    try {
-      const { data, errors } = await doSignUp({
-        variables: { email, password, name }
-      });
-      if (errors && errors.length > 0)
-        throw new Error(errors.map(v => v.message).join("|"));
-
-      if (data) {
-        setUser(data.sign_up);
-        return data.sign_up;
-      }
-      throw new Error("Data Not Found!");
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
-  };
+  }, [doLogout]);
 
   return (
     <AuthContext.Provider
       value={{
         loading,
         user,
-        login,
         logout,
-        signUp,
+        error: errorCurrentUser || errorLogout,
         ...stateRef.current
       }}
     >

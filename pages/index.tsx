@@ -1,17 +1,9 @@
 import { NextPage } from "next";
 
 import { useMutation } from "@apollo/react-hooks";
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Divider,
-  Spinner,
-  Stack,
-} from "@chakra-ui/core";
+import { Box, Divider, Spinner, Stack } from "@chakra-ui/core";
 
+import { ErrorGQLAlert } from "../src/Components/ErrorGQLAlert";
 import { ProductList } from "../src/Components/Product";
 import { SearchProduct } from "../src/Components/SearchProduct";
 import { StoreSelection } from "../src/Components/StoreSelection";
@@ -35,15 +27,7 @@ const Index: NextPage = () => {
       <Divider />
       <Divider />
       {loading && <Spinner size="xl" alignSelf="center" />}
-      {error && (
-        <Alert status="error" alignSelf="center">
-          <AlertIcon />
-          <AlertTitle mr={2}>Error!</AlertTitle>
-          <AlertDescription>
-            {error.graphQLErrors.map(value => value.message).join("|")}
-          </AlertDescription>
-        </Alert>
-      )}
+      <ErrorGQLAlert error={error} alignSelf="center" />
       {data && <ProductList data={data.searchProduct} />}
     </Stack>
   );

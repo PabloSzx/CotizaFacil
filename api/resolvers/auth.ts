@@ -3,8 +3,8 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { USER_ALREADY_EXISTS, WRONG_INFO } from "../consts";
-import { IContext } from "../interfaces";
 import { User } from "../entities";
+import { IContext } from "../interfaces";
 
 export class AuthResolver {
   constructor(
@@ -28,7 +28,7 @@ export class AuthResolver {
     return false;
   }
 
-  @Mutation(() => User, { nullable: true })
+  @Mutation(() => User)
   async login(
     @Ctx() { login }: IContext,
     @Arg("email") email: string,
@@ -39,12 +39,9 @@ export class AuthResolver {
       if (user.password === password) {
         await login(user);
         return user;
-      } else {
-        throw new Error(WRONG_INFO);
       }
     }
-
-    return null;
+    throw new Error(WRONG_INFO);
   }
 
   @Mutation(() => User, { nullable: true })
@@ -61,7 +58,7 @@ export class AuthResolver {
         user = this.UserRepository.create({
           email,
           password,
-          name,
+          name
         });
         await this.UserRepository.save(user);
         await login(user);

@@ -24,7 +24,7 @@ input EditStoreInput {
 type Mutation {
   createQuotation(quotation: QuotationCreate!): Quotation!
   editStore(store: EditStoreInput!): Store!
-  login(email: String!, password: String!): User
+  login(email: String!, password: String!): User!
   logout: Boolean!
   removeStore(storeName: String!): Store!
   searchProduct(productName: String!, storeNames: [String!]!): [Product!]!
