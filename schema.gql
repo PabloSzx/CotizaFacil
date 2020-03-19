@@ -22,6 +22,7 @@ input EditStoreInput {
 }
 
 type Mutation {
+  createQuotation(quotation: QuotationCreate!): Quotation!
   editStore(store: EditStoreInput!): Store!
   login(email: String!, password: String!): User
   logout: Boolean!
@@ -43,7 +44,21 @@ type Product {
 type Query {
   allProducts: [Product!]!
   current_user: User
+  myQuotations: [Quotation!]!
   stores: [Store!]!
+}
+
+type Quotation {
+  date: DateTime!
+  id: Float!
+  name: String!
+  products: [Product!]!
+  user: User!
+}
+
+input QuotationCreate {
+  name: String!
+  products: [String!]!
 }
 
 type Store {

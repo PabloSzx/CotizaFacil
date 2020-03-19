@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { createContext, FC, useEffect, useState } from "react";
+import { createContext, FC, useEffect, useRef, useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/react-hooks";
 
@@ -22,17 +22,20 @@ export const AuthContext = createContext<{
     name: string;
   }) => Promise<IAuthenticatedUser>;
   loading: boolean;
+  firstLoading: boolean;
 }>({
   user: null,
   login: async () => ({ email: "", name: "", admin: false }),
   logout: async () => null,
   signUp: async () => ({ email: "", name: "", admin: false }),
-  loading: false
+  loading: true,
+  firstLoading: true
 });
 
 export const AuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<IAuthenticatedUser | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const stateRef = useRef({ firstLoading: true });
 
   const { loading: loadingCurrentUser, data } = useQuery<{
     current_user: IAuthenticatedUser;
@@ -86,9 +89,12 @@ export const AuthProvider: FC = ({ children }) => {
   `);
 
   useEffect(() => {
-    setLoading(
-      loadingCurrentUser || loadingLogin || loadingSignUp || loadingLogout
-    );
+    const isLoading =
+      loadingCurrentUser || loadingLogin || loadingSignUp || loadingLogout;
+    setLoading(isLoading);
+    if (!isLoading) {
+      stateRef.current.firstLoading = false;
+    }
   }, [loadingCurrentUser, loadingLogin, loadingSignUp, loadingLogout]);
 
   useEffect(() => {
@@ -168,7 +174,8 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         login,
         logout,
-        signUp
+        signUp,
+        ...stateRef.current
       }}
     >
       {children}

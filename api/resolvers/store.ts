@@ -1,13 +1,6 @@
 import assert from "assert";
 import { some } from "lodash";
-import {
-  Arg,
-  Authorized,
-  Mutation,
-  ObjectType,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Mutation, Query, Resolver } from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 

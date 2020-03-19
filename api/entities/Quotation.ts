@@ -1,11 +1,11 @@
-import { Field, ObjectType } from "type-graphql";
+import { ArrayMinSize, IsUrl, Length } from "class-validator";
+import { Field, InputType, ObjectType } from "type-graphql";
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -44,4 +44,21 @@ export class Quotation {
   @JoinTable()
   @Field(() => [Product])
   products: Product[];
+}
+
+@InputType()
+export class QuotationCreate {
+  @ArrayMinSize(1)
+  @IsUrl(
+    { protocols: ["https"] },
+    {
+      each: true
+    }
+  )
+  @Field(() => [String])
+  products: string[];
+
+  @Length(1, 50)
+  @Field()
+  name: string;
 }

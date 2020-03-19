@@ -1,7 +1,16 @@
 import { NextPage } from "next";
 
 import { useMutation } from "@apollo/react-hooks";
-import { Box, Divider, Spinner, Stack } from "@chakra-ui/core";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Divider,
+  Spinner,
+  Stack,
+} from "@chakra-ui/core";
 
 import { ProductList } from "../src/Components/Product";
 import { SearchProduct } from "../src/Components/SearchProduct";
@@ -9,7 +18,7 @@ import { StoreSelection } from "../src/Components/StoreSelection";
 import { SEARCH_PRODUCT } from "../src/graphql/search";
 
 const Index: NextPage = () => {
-  const [searchProduct, { data, loading }] = useMutation(SEARCH_PRODUCT);
+  const [searchProduct, { data, loading, error }] = useMutation(SEARCH_PRODUCT);
 
   return (
     <Stack>
@@ -25,7 +34,16 @@ const Index: NextPage = () => {
       </Box>
       <Divider />
       <Divider />
-      {loading && <Spinner />}
+      {loading && <Spinner size="xl" alignSelf="center" />}
+      {error && (
+        <Alert status="error" alignSelf="center">
+          <AlertIcon />
+          <AlertTitle mr={2}>Error!</AlertTitle>
+          <AlertDescription>
+            {error.graphQLErrors.map(value => value.message).join("|")}
+          </AlertDescription>
+        </Alert>
+      )}
       {data && <ProductList data={data.searchProduct} />}
     </Stack>
   );

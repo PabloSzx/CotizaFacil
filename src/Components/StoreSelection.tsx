@@ -1,9 +1,8 @@
 import { FC, memo, useCallback, useEffect } from "react";
-import { Checkbox } from "semantic-ui-react";
+import { Button, Checkbox, Icon } from "semantic-ui-react";
 
 import { useQuery } from "@apollo/react-hooks";
 import {
-  Button,
   Flex,
   Modal,
   ModalContent,
@@ -43,8 +42,16 @@ export const StoreSelection: FC = memo(() => {
   }, [data]);
   return (
     <>
-      <Button onClick={onOpen} isDisabled={loading} isLoading={loading}>
-        Tiendas
+      <Button
+        onClick={onOpen}
+        disabled={loading}
+        loading={loading}
+        icon
+        labelPosition="left"
+        color="brown"
+      >
+        <Icon name="shop" />
+        Tiendas Seleccionadas
       </Button>
       <Modal isOpen={isOpen} onClose={onClose} preserveScrollBarGap>
         <ModalOverlay />

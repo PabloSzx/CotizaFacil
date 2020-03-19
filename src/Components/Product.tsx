@@ -11,13 +11,13 @@ export const ProductRow: FC<{ product: IProduct } & StackProps> = ({
   ...stackProps
 }) => {
   const isChecked = ProductSelectionStore.hooks.useIsProductSelected(
-    productInfo.name
+    productInfo.url
   );
 
   const { toggleProductSelected } = ProductSelectionStore.actions;
 
   const toggleIsChecked = useCallback(() => {
-    toggleProductSelected(productInfo.name);
+    toggleProductSelected(productInfo.url);
   }, [productInfo]);
 
   return (
@@ -31,7 +31,7 @@ export const ProductRow: FC<{ product: IProduct } & StackProps> = ({
       <Checkbox checked={isChecked} onChange={toggleIsChecked} />
       <Image
         src={productInfo.image}
-        alt="product_img"
+        alt={productInfo.name}
         width="100%"
         height="100%"
         maxWidth="50px"

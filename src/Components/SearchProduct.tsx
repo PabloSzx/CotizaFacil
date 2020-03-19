@@ -1,7 +1,7 @@
 import { FC, memo, useState } from "react";
-import { Input } from "semantic-ui-react";
+import { Button, Icon, Input } from "semantic-ui-react";
 
-import { Button, Flex } from "@chakra-ui/core";
+import { Stack } from "@chakra-ui/core";
 
 import { ProductSelectionStore } from "../Context/ProductSelection";
 
@@ -31,17 +31,25 @@ export const SearchProduct: FC<{
         setLoading(false);
       }}
     >
-      <Flex alignItems="center">
+      <Stack alignItems="center" shouldWrapChildren isInline>
         <Input
           placeholder="martillo..."
           value={searchInput}
           onChange={({ target: { value } }) => setSearchInput(value)}
           disabled={loading}
         />
-        <Button isLoading={loading} isDisabled={loading} type="submit">
+        <Button
+          loading={loading}
+          disabled={loading}
+          type="submit"
+          icon
+          labelPosition="left"
+          color="green"
+        >
+          <Icon name="search" />
           Buscar
         </Button>
-      </Flex>
+      </Stack>
     </form>
   );
 });

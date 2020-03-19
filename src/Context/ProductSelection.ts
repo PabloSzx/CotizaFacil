@@ -5,6 +5,7 @@ export type IProduct = {
   price: string;
   store: string;
   image: string;
+  url: string;
 };
 
 export interface IProductSelection {
