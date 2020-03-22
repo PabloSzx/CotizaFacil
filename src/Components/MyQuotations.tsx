@@ -1,9 +1,10 @@
 import { format } from "date-fns-tz";
 import { es } from "date-fns/locale";
-import { FC } from "react";
+import Router from "next/router";
+import { FC, useCallback, useContext, useRef } from "react";
 import { Button, ButtonProps, Icon, Table } from "semantic-ui-react";
 
-import { useQuery } from "@apollo/react-hooks";
+import { useMutation, useQuery } from "@apollo/react-hooks";
 import {
   Box,
   Modal,
@@ -18,7 +19,9 @@ import {
 } from "@chakra-ui/core";
 
 import { ProductSelectionStore } from "../Context/ProductSelection";
-import { MY_QUOTATIONS } from "../graphql/quotation";
+import { MY_QUOTATIONS, REMOVE_QUOTATION } from "../graphql/quotation";
+import { AuthContext } from "./Auth/Context";
+import { Confirm } from "./Confirm";
 import { QuotationStore } from "./SaveQuotation";
 
 export const MyQuotations: FC<ButtonProps> = props => {
@@ -26,7 +29,31 @@ export const MyQuotations: FC<ButtonProps> = props => {
     fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true
   });
+  const dataRef = useRef<{ id?: number }>({});
+  const [removeQuotation] = useMutation(REMOVE_QUOTATION, {
+    update: cache => {
+      if (data && dataRef?.current.id !== undefined) {
+        cache.writeQuery({
+          query: MY_QUOTATIONS,
+          data: {
+            ...data,
+            myQuotations: data.myQuotations.filter(
+              quotation => quotation.id !== dataRef.current.id
+            )
+          }
+        });
+      }
+    }
+  });
   const disclosure = useDisclosure();
+  const { user } = useContext(AuthContext);
+  const onOpenMyQuotations = useCallback(() => {
+    if (user) {
+      disclosure.onOpen();
+    } else {
+      Router.push("/login");
+    }
+  }, [user, disclosure.onOpen]);
 
   return (
     <>
@@ -35,7 +62,7 @@ export const MyQuotations: FC<ButtonProps> = props => {
         icon
         labelPosition="left"
         {...props}
-        onClick={disclosure.onOpen}
+        onClick={onOpenMyQuotations}
       >
         <Icon name="book" />
         Mis cotizaciones
@@ -93,10 +120,32 @@ export const MyQuotations: FC<ButtonProps> = props => {
                               <Icon name="arrow alternate circle up" />
                               Cargar
                             </Button>
-                            <Button negative icon labelPosition="left">
-                              <Icon name="remove circle" />
-                              Eliminar
-                            </Button>
+                            <Confirm
+                              header={`¿Estás seguro que deseas eliminar la cotización ${quotation.name}-${quotation.date}?`}
+                              content="Será eliminada de forma permanente de tu cuenta"
+                              confirmButton="Estoy seguro"
+                              cancelButton="Cancelar"
+                            >
+                              <Button
+                                negative
+                                icon
+                                labelPosition="left"
+                                onClick={async () => {
+                                  dataRef.current.id = quotation.id;
+                                  await removeQuotation({
+                                    variables: {
+                                      quotation_id: quotation.id
+                                    },
+                                    optimisticResponse: {
+                                      removeQuotation: true
+                                    }
+                                  });
+                                }}
+                              >
+                                <Icon name="remove circle" />
+                                Eliminar
+                              </Button>
+                            </Confirm>
                           </Table.Cell>
                         </Table.Row>
                       );

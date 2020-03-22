@@ -3,11 +3,13 @@ import { es } from "date-fns/locale";
 import { saveAs } from "file-saver";
 import { Parser } from "json2csv";
 import { reduce, toInteger } from "lodash";
+import Router from "next/router";
 import {
   ChangeEvent,
   FC,
   memo,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -33,6 +35,7 @@ import {
 import { priceStringToNumber } from "../../shared/utils";
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { CREATE_QUOTATION, MY_QUOTATIONS } from "../graphql/quotation";
+import { AuthContext } from "./Auth/Context";
 
 interface IDownloadQuotation {
   index: number;
@@ -235,9 +238,15 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
     } catch (err) {}
   }, [productsSelected, quotationName]);
 
+  const { user } = useContext(AuthContext);
+
   const onOpenModal = useCallback(() => {
-    QuotationStore.actions.setIsModalOpen(true);
-  }, []);
+    if (user) {
+      QuotationStore.actions.setIsModalOpen(true);
+    } else {
+      Router.push("/login");
+    }
+  }, [user]);
 
   const onCloseModal = useCallback(() => {
     QuotationStore.actions.setIsModalOpen(false);

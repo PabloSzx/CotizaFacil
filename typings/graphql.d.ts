@@ -30,6 +30,7 @@ export type Mutation = {
   sign_up?: Maybe<User>;
   searchProduct: Array<Product>;
   createQuotation: Quotation;
+  removeQuotation: Scalars['Boolean'];
   upsertStore: Store;
   editStore: Store;
   removeStore: Store;
@@ -57,6 +58,11 @@ export type MutationSearchProductArgs = {
 
 export type MutationCreateQuotationArgs = {
   quotation: QuotationCreate;
+};
+
+
+export type MutationRemoveQuotationArgs = {
+  quotation_id: Scalars['Int'];
 };
 
 

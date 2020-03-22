@@ -26,6 +26,7 @@ type Mutation {
   editStore(store: EditStoreInput!): Store!
   login(email: String!, password: String!): User!
   logout: Boolean!
+  removeQuotation(quotation_id: Int!): Boolean!
   removeStore(storeName: String!): Store!
   searchProduct(productName: String!, storeNames: [String!]!): [Product!]!
   sign_up(email: String!, name: String!, password: String!): User

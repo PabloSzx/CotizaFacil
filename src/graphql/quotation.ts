@@ -3,6 +3,7 @@ import gql, { DocumentNode } from "graphql-tag-ts";
 import {
   Mutation,
   MutationCreateQuotationArgs,
+  MutationRemoveQuotationArgs,
   Product,
   Query,
   Quotation,
@@ -69,5 +70,16 @@ export const CREATE_QUOTATION: DocumentNode<
         price
       }
     }
+  }
+`;
+
+export const REMOVE_QUOTATION: DocumentNode<
+  {
+    removeQuotation: Mutation["removeQuotation"];
+  },
+  MutationRemoveQuotationArgs
+> = gql`
+  mutation($quotation_id: Int!) {
+    removeQuotation(quotation_id: $quotation_id)
   }
 `;

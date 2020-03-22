@@ -16,11 +16,14 @@ th:not(.center) {
   text-align: center;
   vertical-align: top;
   justify-content: center;
-  /* align-items: center; */
 }
 
 .quotationNameLabel {
   display: flex !important;
   align-items: center;
   justify-content: center;
+}
+
+.ui.page.modals {
+  z-index: 10000;
 }

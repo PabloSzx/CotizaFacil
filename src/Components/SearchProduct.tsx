@@ -16,7 +16,10 @@ export const SearchProduct: FC<{
 }> = memo(({ searchProduct }) => {
   const [searchInput, setSearchInput] = useRememberState(
     "cotiza_facil_search_input",
-    ""
+    "",
+    {
+      SSR: true
+    }
   );
   const storesSelected = ProductSelectionStore.hooks.useStoresSelected();
   const [loading, setLoading] = useState(false);
