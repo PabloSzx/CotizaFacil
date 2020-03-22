@@ -1,3 +1,7 @@
+import { format } from "date-fns-tz";
+import { es } from "date-fns/locale";
+import { saveAs } from "file-saver";
+import { Parser } from "json2csv";
 import { reduce, toInteger } from "lodash";
 import {
   ChangeEvent,
@@ -30,10 +34,54 @@ import { priceStringToNumber } from "../../shared/utils";
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { CREATE_QUOTATION, MY_QUOTATIONS } from "../graphql/quotation";
 
+interface IDownloadQuotation {
+  index: number;
+  product: string;
+  store: string;
+  quantity: number;
+  unitPrice: string;
+  totalPrice: string;
+  url: string;
+}
+
+const downloadParser = new Parser<IDownloadQuotation>({
+  fields: [
+    {
+      value: "index",
+      label: "#"
+    },
+    {
+      value: "product",
+      label: "Producto"
+    },
+    {
+      value: "store",
+      label: "Tienda"
+    },
+    {
+      value: "quantity",
+      label: "Cantidad"
+    },
+    {
+      value: "unitPrice",
+      label: "Precio Unitario"
+    },
+    {
+      value: "totalPrice",
+      label: "Precio Total"
+    },
+    {
+      value: "url",
+      label: "URL"
+    }
+  ]
+});
+
 export const QuotationStore = createStore(
   {
     totalPrice: 0,
     productsPrice: {} as Record<string, number>,
+    productsQuantity: {} as Record<string, number>,
     newName: "",
     isModalOpen: false
   },
@@ -76,21 +124,24 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
 
     const onQuantityChange = useCallback(
       ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-        const n = toInteger(value);
-        if (n > 0 && n < 10000) {
-          setQuantity(n);
-        }
+        let n = toInteger(value);
 
         if (n <= 0) {
-          setQuantity(1);
+          n = 1;
+        } else if (n >= 10000) {
+          n = 9999;
         }
 
-        if (n >= 10000) {
-          setQuantity(9999);
-        }
+        setQuantity(n);
       },
       [setQuantity]
     );
+
+    useEffect(() => {
+      QuotationStore.produce(draft => {
+        draft.productsQuantity[product] = quantity;
+      });
+    }, [quantity, product]);
 
     const price = useMemo(() => {
       return `$${priceStringToNumber(info?.price).toLocaleString("de-DE")}`;
@@ -112,7 +163,7 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
       };
     }, [totalPrice, product]);
 
-    const removeProduct = useCallback(() => {
+    const onRemoveProduct = useCallback(() => {
       ProductSelectionStore.actions.toggleProductSelected(product);
     }, [product]);
 
@@ -141,7 +192,7 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
           <Icon
             circular
             name="close"
-            onClick={removeProduct}
+            onClick={onRemoveProduct}
             className="pointer"
           />
         </Table.Cell>
@@ -175,7 +226,7 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
           variables: {
             quotation: {
               products: productsSelected,
-              name: quotationName
+              name: quotationName.trim()
             }
           }
         });
@@ -194,6 +245,52 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
 
   const totalPrice = QuotationStore.hooks.useTotalPrice();
 
+  const onDownloadClick = useCallback(() => {
+    const data = productsSelected.reduce<IDownloadQuotation[]>(
+      (acum, productUrl, index) => {
+        const info = ProductSelectionStore.produce().productsInfo[productUrl];
+
+        if (info) {
+          const { name, price, store } = info;
+          acum.push({
+            index,
+            product: name,
+            store: store.name,
+            quantity:
+              QuotationStore.produce().productsQuantity[productUrl] ?? 1,
+            unitPrice: price,
+            totalPrice: `$${QuotationStore.produce().productsPrice[
+              productUrl
+            ]?.toLocaleString("de-DE") ?? price.replace("$", "")}`,
+            url: productUrl
+          });
+        }
+        return acum;
+      },
+      []
+    );
+
+    const dateNow = format(Date.now(), "d 'de' MMMM 'del' yyyy HH:mm:ss (z)", {
+      timeZone: "America/Santiago",
+      locale: es
+    });
+
+    const csv = `"${quotationName.trim()}","${dateNow}"\n\n${downloadParser.parse(
+      data
+    )}\n\n,,,,"Precio Total Cotización: ","$${totalPrice.toLocaleString(
+      "de-DE"
+    )}"`;
+
+    saveAs(
+      new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=UTF-8"
+      }),
+      `${quotationName.trim()}-${dateNow} | CotizaFacil.csv`,
+      {
+        autoBom: false
+      }
+    );
+  }, [totalPrice, productsSelected, quotationName]);
   return (
     <>
       <Box {...props}>
@@ -258,7 +355,13 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
                 </Text>
               </Box>
               <Stack isInline shouldWrapChildren justifyContent="space-around">
-                <Button color="blue" icon labelPosition="left">
+                <Button
+                  color="blue"
+                  icon
+                  labelPosition="left"
+                  disabled={!quotationName}
+                  onClick={onDownloadClick}
+                >
                   <Icon name="download" />
                   Descargar cotización
                 </Button>

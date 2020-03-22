@@ -121,9 +121,3 @@ process.on("exit", closeBrowser);
 process.on("SIGINT", closeBrowser);
 process.on("SIGUSR1", closeBrowser);
 process.on("SIGUSR2", closeBrowser);
-
-// getSodimacData("martillo").then(data => {
-//   console.log({
-//     data
-//   });
-// });

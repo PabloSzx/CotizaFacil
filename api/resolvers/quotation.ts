@@ -28,10 +28,6 @@ export class QuotationResolver {
       relations: ["products", "products.store"]
     });
 
-    console.log({
-      quotations
-    });
-
     return quotations;
   }
 
