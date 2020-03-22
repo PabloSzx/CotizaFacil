@@ -9,3 +9,12 @@ th:not(.center) {
 .widthFitContent {
   width: 4em;
 }
+
+.quotationNameInput {
+  width: 700px;
+  max-width: 80%;
+  text-align: center;
+  vertical-align: top;
+  justify-content: center;
+  /* align-items: center; */
+}

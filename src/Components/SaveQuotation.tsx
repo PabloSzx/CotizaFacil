@@ -9,8 +9,7 @@ import {
   useState,
 } from "react";
 import { createStore } from "react-state-selector";
-import { Button, ButtonProps, Icon, Input, Table } from "semantic-ui-react";
-import { useRememberState } from "use-remember-state";
+import { Button, Icon, Input, Table } from "semantic-ui-react";
 
 import { useMutation } from "@apollo/react-hooks";
 import {
@@ -25,21 +24,24 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  useDisclosure,
 } from "@chakra-ui/core";
 
 import { priceStringToNumber } from "../../shared/utils";
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { CREATE_QUOTATION, MY_QUOTATIONS } from "../graphql/quotation";
 
-const QuotationStore = createStore(
+export const QuotationStore = createStore(
   {
     totalPrice: 0,
-    productsPrice: {} as Record<string, number>
+    productsPrice: {} as Record<string, number>,
+    newName: "",
+    isModalOpen: false
   },
   {
     hooks: {
-      useTotalPrice: ({ totalPrice }) => totalPrice
+      useTotalPrice: ({ totalPrice }) => totalPrice,
+      useName: ({ newName }) => newName,
+      useIsModalOpen: ({ isModalOpen }) => isModalOpen
     },
     actions: {
       setProductPrice: (product: string, price: number) => draft => {
@@ -56,6 +58,12 @@ const QuotationStore = createStore(
           },
           0
         );
+      },
+      setName: (name: string) => draft => {
+        draft.newName = name;
+      },
+      setIsModalOpen: (isOpen: boolean) => draft => {
+        draft.isModalOpen = isOpen;
       }
     }
   }
@@ -110,40 +118,40 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
 
     return info ? (
       <Table.Row>
-        <Table.HeaderCell textAlign="center" className="center">
+        <Table.Cell textAlign="center" className="center">
           {index + 1}
-        </Table.HeaderCell>
-        <Table.HeaderCell>
+        </Table.Cell>
+        <Table.Cell>
           <a href={info.url} target="_blank" rel="noopener">
             {info.name}
           </a>
-        </Table.HeaderCell>
-        <Table.HeaderCell>{info.store.name}</Table.HeaderCell>
-        <Table.HeaderCell>
+        </Table.Cell>
+        <Table.Cell>{info.store.name}</Table.Cell>
+        <Table.Cell>
           <input
             className="widthFitContent"
             type="number"
             value={quantity}
             onChange={onQuantityChange}
           />
-        </Table.HeaderCell>
-        <Table.HeaderCell>{price}</Table.HeaderCell>
-        <Table.HeaderCell>{totalPrice}</Table.HeaderCell>
-        <Table.HeaderCell>
+        </Table.Cell>
+        <Table.Cell>{price}</Table.Cell>
+        <Table.Cell>{totalPrice}</Table.Cell>
+        <Table.Cell>
           <Icon
             circular
             name="close"
             onClick={removeProduct}
             className="pointer"
           />
-        </Table.HeaderCell>
+        </Table.Cell>
       </Table.Row>
     ) : null;
   }
 );
 
 export const SaveQuotation: FC<BoxProps> = memo(props => {
-  const disclosure = useDisclosure(false);
+  const isModalOpen = QuotationStore.hooks.useIsModalOpen();
   const productsSelected = ProductSelectionStore.hooks.useProductsKeysSelected();
   const [createQuotation, createQuotationOpts] = useMutation(CREATE_QUOTATION, {
     refetchQueries: [
@@ -152,15 +160,13 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
       }
     ]
   });
-  const [quotationName, setQuotationName] = useRememberState(
-    "createQuotationName",
-    ""
-  );
+  const quotationName = QuotationStore.hooks.useName();
+
   const onQuotationNameChange = useCallback(
     ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
-      setQuotationName(value);
+      QuotationStore.actions.setName(value);
     },
-    [setQuotationName]
+    []
   );
   const onCreateQuotation = useCallback(async () => {
     try {
@@ -173,38 +179,54 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
             }
           }
         });
-        disclosure.onClose();
+        QuotationStore.actions.setIsModalOpen(false);
       }
     } catch (err) {}
   }, [productsSelected, quotationName]);
+
+  const onOpenModal = useCallback(() => {
+    QuotationStore.actions.setIsModalOpen(true);
+  }, []);
+
+  const onCloseModal = useCallback(() => {
+    QuotationStore.actions.setIsModalOpen(false);
+  }, []);
 
   const totalPrice = QuotationStore.hooks.useTotalPrice();
 
   return (
     <>
       <Box {...props}>
-        <Button icon labelPosition="left" onClick={disclosure.onOpen} primary>
+        <Button icon labelPosition="left" onClick={onOpenModal} primary>
           <Icon name="save" />
           Guardar cotización
         </Button>
       </Box>
 
-      <Modal {...disclosure} size="80vw">
+      <Modal
+        onClose={onCloseModal}
+        isOpen={isModalOpen}
+        size="80vw"
+        preserveScrollBarGap
+        blockScrollOnMount
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Cotización</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Stack>
-              <Box>
+              <Flex alignSelf="center" justifyContent="center">
                 <Input
                   label="Nombre cotización"
-                  placeholder="New Quotation Name"
+                  placeholder="Nueva cotización"
                   value={quotationName}
                   onChange={onQuotationNameChange}
+                  size="large"
+                  className="quotationNameInput"
                 />
-              </Box>
-              <Box>
+              </Flex>
+              <Box maxHeight="70vh" overflowY="auto">
                 <Table celled selectable>
                   <Table.Header>
                     <Table.Row>
@@ -230,8 +252,10 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
                   </Table.Body>
                 </Table>
               </Box>
-              <Box>
-                <Text>${totalPrice.toLocaleString("de-DE")}</Text>
+              <Box alignSelf="flex-end">
+                <Text fontSize="3xl">
+                  Precio Total: ${totalPrice.toLocaleString("de-DE")}
+                </Text>
               </Box>
               <Stack isInline shouldWrapChildren justifyContent="space-around">
                 <Button color="blue" icon labelPosition="left">

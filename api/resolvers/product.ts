@@ -1,5 +1,5 @@
 import assert from "assert";
-import { sortBy, toNumber } from "lodash";
+import { sortBy } from "lodash";
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { In, Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";

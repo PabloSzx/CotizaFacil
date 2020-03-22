@@ -106,6 +106,22 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
           return acum;
         }, {})
       };
+    },
+    loadQuotationSelection: (products: IProductQuery[]) => draft => {
+      draft.productsInfo = {
+        ...draft.productsInfo,
+        ...products.reduce<Record<string, IProductQuery>>((acum, value) => {
+          acum[value.url] = value;
+          return acum;
+        }, {})
+      };
+      draft.productsChecked = products.reduce<Record<string, true>>(
+        (acum, value) => {
+          acum[value.url] = true;
+          return acum;
+        },
+        {}
+      );
     }
   }
 });
