@@ -44,7 +44,7 @@ export const SearchProduct: FC<{
         />
         <Button
           loading={loading}
-          disabled={loading}
+          disabled={loading || !searchInput}
           type="submit"
           icon
           labelPosition="left"

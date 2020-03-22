@@ -12,9 +12,15 @@ th:not(.center) {
 
 .quotationNameInput {
   width: 700px;
-  max-width: 80%;
+  max-width: 70vw;
   text-align: center;
   vertical-align: top;
   justify-content: center;
   /* align-items: center; */
+}
+
+.quotationNameLabel {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
 }

@@ -38,8 +38,15 @@ const Index: NextPage = () => {
   return (
     <Stack>
       <Box>
-        <Stack isInline justifyContent="space-around">
-          <Box>
+        <Stack
+          isInline
+          justifyContent="space-around"
+          shouldWrapChildren
+          flexWrap="wrap"
+          alignItems="center"
+          spacing={0}
+        >
+          <Box m={1} className="48">
             <SearchProduct searchProduct={searchProduct} />
           </Box>
           <Box>

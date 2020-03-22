@@ -27,17 +27,20 @@ export const Navigation: FC = () => {
     <Stack
       isInline
       justifyContent={user ? "space-between" : "flex-end"}
+      alignContent="space-around"
       padding="10px"
       marginBottom="15px"
-      width="100%"
+      flexWrap="wrap"
+      shouldWrapChildren
+      spacing="10px"
     >
       {user && (
-        <Box>
+        <Box m={1}>
           <MyQuotations />
         </Box>
       )}
 
-      <Stack isInline shouldWrapChildren spacing="1em">
+      <Stack isInline shouldWrapChildren spacing="1em" m={1} flexWrap="wrap">
         <Button
           color="blue"
           onClick={() => {

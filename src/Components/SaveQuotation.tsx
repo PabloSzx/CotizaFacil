@@ -13,7 +13,7 @@ import {
   useState,
 } from "react";
 import { createStore } from "react-state-selector";
-import { Button, Icon, Input, Table } from "semantic-ui-react";
+import { Button, Icon, Input, Label, Table } from "semantic-ui-react";
 
 import { useMutation } from "@apollo/react-hooks";
 import {
@@ -313,10 +313,12 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
           <ModalCloseButton />
           <ModalBody>
             <Stack>
-              <Flex alignSelf="center" justifyContent="center">
+              <Flex alignSelf="center" justifyContent="center" wrap="wrap">
+                <Label size="big" className="quotationNameLabel">
+                  Nombre nueva cotización
+                </Label>
                 <Input
-                  label="Nombre cotización"
-                  placeholder="Nueva cotización"
+                  placeholder="cotización"
                   value={quotationName}
                   onChange={onQuotationNameChange}
                   size="large"
@@ -354,7 +356,14 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
                   Precio Total: ${totalPrice.toLocaleString("de-DE")}
                 </Text>
               </Box>
-              <Stack isInline shouldWrapChildren justifyContent="space-around">
+              <Stack
+                isInline
+                shouldWrapChildren
+                flexWrap="wrap"
+                justifyContent="space-around"
+                alignItems="center"
+                alignContent="center"
+              >
                 <Button
                   color="blue"
                   icon
