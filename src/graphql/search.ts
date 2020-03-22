@@ -1,20 +1,28 @@
 import gql, { DocumentNode } from "graphql-tag-ts";
 
-export type IProductQuery = {
-  name: string;
-  price: string;
-  image: string;
-  url: string;
-  store: {
-    name: string;
-  };
-};
+import {
+  Mutation,
+  MutationSearchProductArgs,
+  Product,
+  Query,
+  Store,
+} from "../../typings/graphql";
+import { IfImplements } from "../../typings/utils";
+
+export type IProductQuery = IfImplements<
+  Pick<Product, "name" | "price" | "image" | "url"> & {
+    store: Pick<Store, "name">;
+  },
+  Product
+>;
 
 export const SEARCH_PRODUCT: DocumentNode<
   {
-    searchProduct: IProductQuery[];
+    searchProduct: Array<
+      IfImplements<IProductQuery, Mutation["searchProduct"][number]>
+    >;
   },
-  { productName: string; storeNames: string[] }
+  MutationSearchProductArgs
 > = gql`
   mutation($productName: String!, $storeNames: [String!]!) {
     searchProduct(storeNames: $storeNames, productName: $productName) {
@@ -30,11 +38,9 @@ export const SEARCH_PRODUCT: DocumentNode<
 `;
 
 export const ALL_STORES: DocumentNode<{
-  stores: {
-    name: string;
-    image: string;
-    url: string;
-  }[];
+  stores: Array<
+    IfImplements<Pick<Store, "name" | "image" | "url">, Query["stores"][number]>
+  >;
 }> = gql`
   query {
     stores {

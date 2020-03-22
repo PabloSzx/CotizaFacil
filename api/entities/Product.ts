@@ -31,7 +31,8 @@ export class Product {
     () => Store,
     store => store.name,
     {
-      eager: true
+      eager: true,
+      nullable: false
     }
   )
   @Field(() => Store)

@@ -1,5 +1,6 @@
 import { FC, memo, useState } from "react";
 import { Button, Icon, Input } from "semantic-ui-react";
+import { useRememberState } from "use-remember-state";
 
 import { Stack } from "@chakra-ui/core";
 
@@ -13,7 +14,10 @@ export const SearchProduct: FC<{
     };
   }) => Promise<unknown>;
 }> = memo(({ searchProduct }) => {
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useRememberState(
+    "cotiza_facil_search_input",
+    ""
+  );
   const storesSelected = ProductSelectionStore.hooks.useStoresSelected();
   const [loading, setLoading] = useState(false);
 

@@ -1,4 +1,7 @@
+import { some } from "lodash";
 import { createSelector, createStore } from "react-state-selector";
+
+import { IProductQuery } from "../graphql/search";
 
 export type IProduct = {
   name: string;
@@ -11,10 +14,13 @@ export type IProduct = {
 export interface IProductSelection {
   productsChecked: Record<string, true>;
   storesSelected: Record<string, true>;
+  productsInfo: Record<string, IProductQuery>;
 }
+
 const initialProductSelection: IProductSelection = {
   productsChecked: {},
-  storesSelected: {}
+  storesSelected: {},
+  productsInfo: {}
 };
 
 const rememberStoresSelectedKey = "CotizaFacilStoresSelected";
@@ -28,12 +34,30 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
     useIsStoreSelected: ({ storesSelected }, store: string) => {
       return !!storesSelected[store];
     },
+    useAnyProductSelected: ({ productsChecked }) => {
+      return some(productsChecked);
+    },
+    useProductsKeysSelected: createSelector(
+      ({ productsChecked }) => productsChecked,
+      productsChecked => {
+        return Object.keys(productsChecked);
+      }
+    ),
     useStoresSelected: createSelector(
       ({ storesSelected }) => {
         return storesSelected;
       },
       storesSelected => {
         return Object.keys(storesSelected);
+      }
+    ),
+    useProductInfo: createSelector(
+      ({ productsInfo }: IProductSelection, _productKey: string) => {
+        return productsInfo;
+      },
+      (_, productKey) => productKey,
+      (productInfo, productKey) => {
+        return productInfo[productKey];
       }
     )
   },
@@ -73,6 +97,15 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
           JSON.stringify(draft.storesSelected)
         );
       } catch (err) {}
+    },
+    setProductsInfo: (products: IProductQuery[]) => draft => {
+      draft.productsInfo = {
+        ...draft.productsInfo,
+        ...products.reduce<Record<string, IProductQuery>>((acum, value) => {
+          acum[value.url] = value;
+          return acum;
+        }, {})
+      };
     }
   }
 });

@@ -22,7 +22,10 @@ export class Quotation {
   @Field(() => User)
   @ManyToOne(
     () => User,
-    user => user.email
+    user => user.email,
+    {
+      eager: true
+    }
   )
   user: User;
 

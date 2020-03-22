@@ -24,7 +24,12 @@ export class QuotationResolver {
       },
       order: {
         date: "DESC"
-      }
+      },
+      relations: ["products", "products.store"]
+    });
+
+    console.log({
+      quotations
     });
 
     return quotations;
@@ -38,13 +43,15 @@ export class QuotationResolver {
   ) {
     assertIsDefined(user, "Auth context is not working properly");
 
-    const newQuotation = this.QuotationRepository.create({
+    let newQuotation = this.QuotationRepository.create({
       user,
       name: quotation.name,
       products: quotation.products.map(url => ({ url })),
       date: new Date()
     });
 
-    return await this.QuotationRepository.save(newQuotation);
+    newQuotation = await this.QuotationRepository.save(newQuotation);
+
+    return await this.QuotationRepository.findOneOrFail(newQuotation.id);
   }
 }

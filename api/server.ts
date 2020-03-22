@@ -3,6 +3,7 @@ import "./scrapping/sodimac";
 import "dotenv/config";
 
 import express from "express";
+import { express as voyagerMiddleware } from "graphql-voyager/middleware";
 import notifier from "node-notifier";
 
 import { apollo, common } from "./";
@@ -13,6 +14,8 @@ const server = express();
 server.set("trust proxy", true);
 
 server.use(common);
+
+server.use("/api/voyager", voyagerMiddleware({ endpointUrl: "/api/graphql" }));
 
 server.use(auth);
 

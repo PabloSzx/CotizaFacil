@@ -4,6 +4,7 @@ import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { In, Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
+import { priceStringToNumber } from "../../shared/utils";
 import { Store } from "../entities";
 import { Product } from "../entities/Product";
 import { getEasyData, getSodimacData } from "../scrapping";
@@ -87,12 +88,7 @@ export class ProductResolver {
     }
 
     products = sortBy(products, product => {
-      return toNumber(
-        product.price
-          .replace(/\./g, "")
-          .replace(/c\/u/i, "")
-          .replace(/\$/, "")
-      );
+      return priceStringToNumber(product.price);
     }).map(({ name, image, url, price, ...rest }) => ({
       name: name.trim(),
       image: image.trim(),
