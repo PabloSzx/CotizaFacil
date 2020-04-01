@@ -1,7 +1,8 @@
 # CotizaFacil
 
-## [Analysis and Design documentation (*spanish*)](https://docs.google.com/document/d/1qxUKeS-ndZCyoxaTVuElVKf1onmRQU8o09NH6ktpLsc/edit?usp=sharing)
-## [Software requirements specification (*spanish*)](https://github.com/PabloSzx/ERS-Cotiza-Facil)
+## [Analysis and Design documentation (_spanish_)](https://docs.google.com/document/d/1qxUKeS-ndZCyoxaTVuElVKf1onmRQU8o09NH6ktpLsc/edit?usp=sharing)
+
+## [Software requirements specification (_spanish_)](https://github.com/PabloSzx/ERS-Cotiza-Facil)
 
 ### Dependencies
 
@@ -45,4 +46,4 @@ or
 npm run dev
 ```
 
-Which will run the development servers concurrently for the client ([**Next.js**](https://nextjs.org/)) and the [**GraphQL API**](https://graphql.org/), using an extra proxy server that joins them, available at [**http://localhost:8000**](http://localhost:8000).
+Which will run the development servers concurrently for the client ([**Next.js**](https://nextjs.org/)) and the [**GraphQL API**](https://graphql.org/) available at [**http://localhost:3000**](http://localhost:3000).
