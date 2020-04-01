@@ -1,6 +1,7 @@
-import { some } from "lodash";
+import { size, some } from "lodash";
 import { createSelector, createStore } from "react-state-selector";
 
+import { Product, Store } from "../../typings/graphql";
 import { IProductQuery } from "../graphql/search";
 
 export type IProduct = {
@@ -15,15 +16,17 @@ export interface IProductSelection {
   productsChecked: Record<string, true>;
   storesSelected: Record<string, true>;
   productsInfo: Record<string, IProductQuery>;
+  productsData: readonly (Pick<Product, "name" | "price" | "image" | "url"> & {
+    store: Pick<Store, "name">;
+  })[];
 }
 
 const initialProductSelection: IProductSelection = {
   productsChecked: {},
   storesSelected: {},
-  productsInfo: {}
+  productsInfo: {},
+  productsData: []
 };
-
-const rememberStoresSelectedKey = "CotizaFacilStoresSelected";
 
 export const ProductSelectionStore = createStore(initialProductSelection, {
   devName: "ProductSelection",
@@ -59,20 +62,14 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
       (productInfo, productKey) => {
         return productInfo[productKey];
       }
-    )
+    ),
+    useProductsData: ({ productsData }) => {
+      return productsData;
+    }
   },
   actions: {
     setInitialSelectedStores: (stores: string[]) => draft => {
-      try {
-        const localStoresSelected = localStorage.getItem(
-          rememberStoresSelectedKey
-        );
-        if (localStoresSelected) {
-          draft.storesSelected = JSON.parse(localStoresSelected);
-        } else {
-          throw undefined;
-        }
-      } catch (err) {
+      if (size(draft.storesSelected) === 0) {
         for (const store of stores) {
           draft.storesSelected[store] = true;
         }
@@ -91,14 +88,9 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
       } else {
         draft.storesSelected[product] = true;
       }
-      try {
-        localStorage.setItem(
-          rememberStoresSelectedKey,
-          JSON.stringify(draft.storesSelected)
-        );
-      } catch (err) {}
     },
     setProductsInfo: (products: IProductQuery[]) => draft => {
+      draft.productsData = products;
       draft.productsInfo = {
         ...draft.productsInfo,
         ...products.reduce<Record<string, IProductQuery>>((acum, value) => {
@@ -123,5 +115,11 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
         {}
       );
     }
+  },
+  storagePersistence: {
+    isActive: true,
+    isSSR: true,
+    persistenceKey: "ProductSelection",
+    debounceWait: 1000
   }
 });

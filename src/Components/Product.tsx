@@ -53,26 +53,30 @@ export const ProductRow: FC<{ product: IProduct } & StackProps> = memo(
   }
 );
 
-export const ProductList: FC<{ data: IProductQuery[] }> = memo(({ data }) => {
-  const anyProductSelected = ProductSelectionStore.hooks.useAnyProductSelected();
+export const ProductList: FC<{ data: readonly IProductQuery[] }> = memo(
+  ({ data }) => {
+    const anyProductSelected = ProductSelectionStore.hooks.useAnyProductSelected();
 
-  return (
-    <>
-      <Stack justifyContent="center">
-        {data.map(({ store: { name }, ...productValue }, key) => {
-          return (
-            <ProductRow
-              key={key}
-              product={{ ...productValue, store: name }}
-              marginLeft="10px"
-              marginRight="10px"
-              paddingLeft="10px"
-              paddingRight="10px"
-            />
-          );
-        })}
-      </Stack>
-      {anyProductSelected && <SaveQuotation pos="fixed" bottom={5} right={5} />}
-    </>
-  );
-});
+    return (
+      <>
+        <Stack justifyContent="center">
+          {data.map(({ store: { name }, ...productValue }, key) => {
+            return (
+              <ProductRow
+                key={key}
+                product={{ ...productValue, store: name }}
+                marginLeft="10px"
+                marginRight="10px"
+                paddingLeft="10px"
+                paddingRight="10px"
+              />
+            );
+          })}
+        </Stack>
+        {anyProductSelected && (
+          <SaveQuotation pos="fixed" bottom={5} right={5} />
+        )}
+      </>
+    );
+  }
+);

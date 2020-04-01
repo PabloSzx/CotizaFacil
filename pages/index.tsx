@@ -1,6 +1,5 @@
 import { NextPage } from "next";
 import { useEffect } from "react";
-import { useRememberState } from "use-remember-state";
 
 import { useMutation } from "@apollo/react-hooks";
 import { Box, Divider, Spinner, Stack } from "@chakra-ui/core";
@@ -15,25 +14,11 @@ import { SEARCH_PRODUCT } from "../src/graphql/search";
 const Index: NextPage = () => {
   const [searchProduct, { data, loading, error }] = useMutation(SEARCH_PRODUCT);
 
-  const [dataRemember, setDataRemember] = useRememberState(
-    "searchProductCotizaFacilData",
-    undefined as typeof data | undefined,
-    {
-      SSR: true
-    }
-  );
+  const productsData = ProductSelectionStore.hooks.useProductsData();
 
   useEffect(() => {
-    if (data) {
-      setDataRemember(data);
-    }
+    ProductSelectionStore.actions.setProductsInfo(data?.searchProduct ?? []);
   }, [data]);
-
-  useEffect(() => {
-    ProductSelectionStore.actions.setProductsInfo(
-      dataRemember?.searchProduct ?? []
-    );
-  }, [dataRemember]);
 
   return (
     <Stack>
@@ -58,7 +43,7 @@ const Index: NextPage = () => {
       <Divider />
       {loading && <Spinner size="xl" alignSelf="center" />}
       <ErrorGQLAlert error={error} alignSelf="center" />
-      {dataRemember && <ProductList data={dataRemember.searchProduct} />}
+      {productsData.length > 0 && <ProductList data={productsData} />}
     </Stack>
   );
 };
