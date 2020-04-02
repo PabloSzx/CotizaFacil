@@ -1,3 +1,3 @@
-export const WRONG_INFO = "wrong_info";
+export const WRONG_INFO = "La información entregada es incorrecta";
 export const ADMIN = "admin";
-export const USER_ALREADY_EXISTS = "user_already_exists";
+export const USER_ALREADY_EXISTS = "El usuario especificado ya existe";

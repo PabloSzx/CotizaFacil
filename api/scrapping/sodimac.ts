@@ -8,7 +8,7 @@ const browser = puppeteer.launch({
   args: ["--no-sandbox"]
 });
 
-const pageLimit = 5;
+const pageLimit = 2;
 
 const sodimacWebsite = "https://www.sodimac.cl";
 
