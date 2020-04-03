@@ -12,13 +12,17 @@ import { ProductSelectionStore } from "../src/Context/ProductSelection";
 import { SEARCH_PRODUCT } from "../src/graphql/search";
 
 const Index: NextPage = () => {
-  const [searchProduct, { data, loading, error }] = useMutation(SEARCH_PRODUCT);
+  const [searchProduct, { data, loading, error, called }] = useMutation(
+    SEARCH_PRODUCT
+  );
 
   const productsData = ProductSelectionStore.hooks.useProductsData();
 
   useEffect(() => {
-    ProductSelectionStore.actions.setProductsInfo(data?.searchProduct ?? []);
-  }, [data]);
+    if (called && !loading) {
+      ProductSelectionStore.actions.setProductsInfo(data?.searchProduct ?? []);
+    }
+  }, [called, loading, data]);
 
   return (
     <Stack>
