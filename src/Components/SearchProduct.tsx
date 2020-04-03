@@ -1,6 +1,7 @@
 import { FC, memo, useState } from "react";
 import { Button, Icon, Input } from "semantic-ui-react";
 import { useRememberState } from "use-remember-state";
+import NProgress from "nprogress";
 
 import { Stack } from "@chakra-ui/core";
 
@@ -18,7 +19,7 @@ export const SearchProduct: FC<{
     "cotiza_facil_search_input",
     "",
     {
-      SSR: true
+      SSR: true,
     }
   );
   const storesSelected = ProductSelectionStore.hooks.useStoresSelected();
@@ -26,15 +27,17 @@ export const SearchProduct: FC<{
 
   return (
     <form
-      onSubmit={async ev => {
+      onSubmit={async (ev) => {
         ev.preventDefault();
         setLoading(true);
+        NProgress.start();
         await searchProduct({
           variables: {
             storeNames: storesSelected,
-            productName: searchInput
-          }
+            productName: searchInput,
+          },
         });
+        NProgress.done();
         setLoading(false);
       }}
     >
