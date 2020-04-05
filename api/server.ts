@@ -31,11 +31,11 @@ try {
       if (process.env.NODE_ENV !== "production") {
         notifier.notify({
           title: "🚀  API Server ready",
-          message: `at http://localhost:${port}`
+          message: `at http://localhost:${port}`,
         });
       }
     })
-    .on("error", err => {
+    .on("error", (err) => {
       if (process.env.NODE_ENV !== "test") {
         console.error(err);
       }
