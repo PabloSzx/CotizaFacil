@@ -5,7 +5,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { Box, Divider, Spinner, Stack } from "@chakra-ui/core";
 
 import { ErrorGQLAlert } from "../src/Components/ErrorGQLAlert";
-import { ProductList } from "../src/Components/Product";
+import { ProductTable } from "../src/Components/Product";
 import { SearchProduct } from "../src/Components/SearchProduct";
 import { StoreSelection } from "../src/Components/StoreSelection";
 import { ProductSelectionStore } from "../src/Context/ProductSelection";
@@ -47,7 +47,7 @@ const Index: NextPage = () => {
       <Divider />
       {loading && <Spinner size="xl" alignSelf="center" />}
       <ErrorGQLAlert error={error} alignSelf="center" />
-      {productsData.length > 0 && <ProductList data={productsData} />}
+      {productsData.length > 0 && <ProductTable data={productsData} />}
     </Stack>
   );
 };

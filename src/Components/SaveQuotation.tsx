@@ -36,6 +36,7 @@ import { priceStringToNumber } from "../../shared/utils";
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { CREATE_QUOTATION, MY_QUOTATIONS } from "../graphql/quotation";
 import { AuthContext } from "./Auth/Context";
+import { Confirm } from "./Confirm";
 
 interface IDownloadQuotation {
   index: number;
@@ -51,33 +52,33 @@ const downloadParser = new Parser<IDownloadQuotation>({
   fields: [
     {
       value: "index",
-      label: "#"
+      label: "#",
     },
     {
       value: "product",
-      label: "Producto"
+      label: "Producto",
     },
     {
       value: "store",
-      label: "Tienda"
+      label: "Tienda",
     },
     {
       value: "quantity",
-      label: "Cantidad"
+      label: "Cantidad",
     },
     {
       value: "unitPrice",
-      label: "Precio Unitario"
+      label: "Precio Unitario",
     },
     {
       value: "totalPrice",
-      label: "Precio Total"
+      label: "Precio Total",
     },
     {
       value: "url",
-      label: "URL"
-    }
-  ]
+      label: "URL",
+    },
+  ],
 });
 
 export const QuotationStore = createStore(
@@ -86,16 +87,16 @@ export const QuotationStore = createStore(
     productsPrice: {} as Record<string, number>,
     productsQuantity: {} as Record<string, number>,
     newName: "",
-    isModalOpen: false
+    isModalOpen: false,
   },
   {
     hooks: {
       useTotalPrice: ({ totalPrice }) => totalPrice,
       useName: ({ newName }) => newName,
-      useIsModalOpen: ({ isModalOpen }) => isModalOpen
+      useIsModalOpen: ({ isModalOpen }) => isModalOpen,
     },
     actions: {
-      setProductPrice: (product: string, price: number) => draft => {
+      setProductPrice: (product: string, price: number) => (draft) => {
         if (price === 0) {
           delete draft.productsPrice[product];
         } else {
@@ -110,13 +111,13 @@ export const QuotationStore = createStore(
           0
         );
       },
-      setName: (name: string) => draft => {
+      setName: (name: string) => (draft) => {
         draft.newName = name;
       },
-      setIsModalOpen: (isOpen: boolean) => draft => {
+      setIsModalOpen: (isOpen: boolean) => (draft) => {
         draft.isModalOpen = isOpen;
-      }
-    }
+      },
+    },
   }
 );
 
@@ -141,7 +142,7 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
     );
 
     useEffect(() => {
-      QuotationStore.produce(draft => {
+      QuotationStore.produce((draft) => {
         draft.productsQuantity[product] = quantity;
       });
     }, [quantity, product]);
@@ -192,27 +193,34 @@ const ProductRow: FC<{ product: string; index: number }> = memo(
         <Table.Cell>{price}</Table.Cell>
         <Table.Cell>{totalPrice}</Table.Cell>
         <Table.Cell>
-          <Icon
-            circular
-            name="close"
-            onClick={onRemoveProduct}
-            className="pointer"
-          />
+          <Confirm
+            header={`¿Estás seguro que deseas quitar el producto ${info.name} de tu cotización?`}
+            content=""
+            confirmButton="Estoy seguro"
+            cancelButton="Cancelar"
+          >
+            <Icon
+              circular
+              name="close"
+              onClick={onRemoveProduct}
+              className="pointer"
+            />
+          </Confirm>
         </Table.Cell>
       </Table.Row>
     ) : null;
   }
 );
 
-export const SaveQuotation: FC<BoxProps> = memo(props => {
+export const SaveQuotation: FC<BoxProps> = memo((props) => {
   const isModalOpen = QuotationStore.hooks.useIsModalOpen();
   const productsSelected = ProductSelectionStore.hooks.useProductsKeysSelected();
   const [createQuotation, createQuotationOpts] = useMutation(CREATE_QUOTATION, {
     refetchQueries: [
       {
-        query: MY_QUOTATIONS
-      }
-    ]
+        query: MY_QUOTATIONS,
+      },
+    ],
   });
   const quotationName = QuotationStore.hooks.useName();
 
@@ -229,9 +237,9 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
           variables: {
             quotation: {
               products: productsSelected,
-              name: quotationName.trim()
-            }
-          }
+              name: quotationName.trim(),
+            },
+          },
         });
         QuotationStore.actions.setIsModalOpen(false);
       }
@@ -268,10 +276,12 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
             quantity:
               QuotationStore.produce().productsQuantity[productUrl] ?? 1,
             unitPrice: price,
-            totalPrice: `$${QuotationStore.produce().productsPrice[
-              productUrl
-            ]?.toLocaleString("de-DE") ?? price.replace("$", "")}`,
-            url: productUrl
+            totalPrice: `$${
+              QuotationStore.produce().productsPrice[
+                productUrl
+              ]?.toLocaleString("de-DE") ?? price.replace("$", "")
+            }`,
+            url: productUrl,
           });
         }
         return acum;
@@ -281,7 +291,7 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
 
     const dateNow = format(Date.now(), "d 'de' MMMM 'del' yyyy HH:mm:ss (z)", {
       timeZone: "America/Santiago",
-      locale: es
+      locale: es,
     });
 
     const csv = `"${quotationName.trim()}","${dateNow}"\n\n${downloadParser.parse(
@@ -292,11 +302,11 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
 
     saveAs(
       new Blob(["\uFEFF" + csv], {
-        type: "text/csv;charset=UTF-8"
+        type: "text/csv;charset=UTF-8",
       }),
       `${quotationName.trim()}-${dateNow} | CotizaFacil.csv`,
       {
-        autoBom: false
+        autoBom: false,
       }
     );
   }, [totalPrice, productsSelected, quotationName]);
@@ -344,7 +354,7 @@ export const SaveQuotation: FC<BoxProps> = memo(props => {
                       <Table.HeaderCell>Cantidad</Table.HeaderCell>
                       <Table.HeaderCell>Precio Unitario</Table.HeaderCell>
                       <Table.HeaderCell>Precio Total</Table.HeaderCell>
-                      <Table.HeaderCell></Table.HeaderCell>
+                      <Table.HeaderCell>Remover</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
