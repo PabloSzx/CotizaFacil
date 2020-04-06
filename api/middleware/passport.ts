@@ -19,7 +19,7 @@ function SessionMiddleware(repository: Repository<Session>) {
     saveUninitialized: false,
     rolling: true,
     cookie: { maxAge: 86400000, secure: false },
-    store: new TypeormStore({ repository })
+    store: new TypeormStore({ repository }),
   });
 }
 
@@ -35,11 +35,11 @@ passport.serializeUser<User, string>((user, cb) => {
   else cb(WRONG_INFO);
 });
 
-passport.deserializeUser<User | null, string>(async (id, done) => {
+passport.deserializeUser<User | null, string>(async (email, done) => {
   try {
     const UserRepository = (await connection).getRepository(User);
 
-    const user = await UserRepository.findOne(id);
+    const user = await UserRepository.findOne({ email, active: true });
 
     if (user) {
       done(null, user);

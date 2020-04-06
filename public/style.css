@@ -6,6 +6,10 @@ th:not(.center) {
   cursor: pointer;
 }
 
+button {
+  cursor: pointer;
+}
+
 .widthFitContent {
   width: 4em;
 }

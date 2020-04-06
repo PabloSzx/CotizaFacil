@@ -34,8 +34,8 @@ export const LOGIN: DocumentNode<
   },
   MutationLoginArgs
 > = gql`
-  mutation($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation($input: LoginInput!) {
+    login(input: $input) {
       email
       name
       admin
@@ -49,8 +49,8 @@ export const SIGN_UP: DocumentNode<
   },
   MutationSign_UpArgs
 > = gql`
-  mutation($email: String!, $password: String!, $name: String!) {
-    sign_up(email: $email, password: $password, name: $name) {
+  mutation($input: SignUpInput!) {
+    sign_up(input: $input) {
       email
       name
       admin

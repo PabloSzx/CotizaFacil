@@ -14,12 +14,16 @@ export const ErrorGQLAlert: FC<{ error?: ApolloError } & AlertProps> = ({
   ...props
 }) => {
   if (error) {
+    console.error({
+      error,
+    });
     return (
       <Alert status="error" {...props}>
         <AlertIcon />
         <AlertTitle mr={2}>Error!</AlertTitle>
         <AlertDescription>
-          {error.graphQLErrors.map(value => value.message).join("|")}
+          {error.graphQLErrors.length === 0 && error.message}
+          {error.graphQLErrors.map((value) => value.message).join("|")}
         </AlertDescription>
       </Alert>
     );

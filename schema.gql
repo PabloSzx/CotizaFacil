@@ -21,15 +21,22 @@ input EditStoreInput {
   url: String
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
   createQuotation(quotation: QuotationCreate!): Quotation!
   editStore(store: EditStoreInput!): Store!
-  login(email: String!, password: String!): User!
+  login(input: LoginInput!): User!
   logout: Boolean!
   removeQuotation(quotation_id: Int!): Boolean!
   removeStore(storeName: String!): Store!
+  removeUser(email: String!): Boolean!
   searchProduct(productName: String!, storeNames: [String!]!): [Product!]!
-  sign_up(email: String!, name: String!, password: String!): User
+  sign_up(input: SignUpInput!): User
+  updateUser(user: UpdateUserInput!): User!
   upsertStore(store: CreateStoreInput!): Store!
 }
 
@@ -63,6 +70,12 @@ input QuotationCreate {
   products: [String!]!
 }
 
+input SignUpInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
 type Store {
   active: Boolean!
   image: String!
@@ -70,7 +83,14 @@ type Store {
   url: String!
 }
 
+input UpdateUserInput {
+  admin: Boolean!
+  email: String!
+  name: String!
+}
+
 type User {
+  active: Boolean!
   admin: Boolean!
   email: String!
   name: String!

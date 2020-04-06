@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Form, Header, Input, Label } from "semantic-ui-react";
 import sha512 from "crypto-js/sha512";
-
+import { isEmail } from "validator";
 import { useMutation } from "@apollo/react-hooks";
 
 import { ErrorGQLAlert } from "../../ErrorGQLAlert";
@@ -23,11 +23,17 @@ const Login: FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const invalidData = !isEmail(email) || !password;
+
   return (
     <Form
       onSubmit={(ev) => {
         ev.preventDefault();
-        login({ variables: { email, password: sha512(password).toString() } });
+        login({
+          variables: {
+            input: { email, password: sha512(password).toString() },
+          },
+        });
       }}
     >
       <Header as="h1">Login</Header>
@@ -53,7 +59,12 @@ const Login: FC = () => {
           disabled={loading}
         />
       </Form.Field>
-      <Form.Button type="submit" positive disabled={loading} loading={loading}>
+      <Form.Button
+        type="submit"
+        positive
+        disabled={loading || invalidData}
+        loading={loading}
+      >
         Login
       </Form.Button>
     </Form>

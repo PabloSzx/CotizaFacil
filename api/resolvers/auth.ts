@@ -5,6 +5,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { USER_ALREADY_EXISTS, WRONG_INFO } from "../consts";
 import { User } from "../entities";
 import { IContext } from "../interfaces";
+import { LoginInput, SignUpInput } from "../entities/Auth";
 
 export class AuthResolver {
   constructor(
@@ -31,15 +32,16 @@ export class AuthResolver {
   @Mutation(() => User)
   async login(
     @Ctx() { login }: IContext,
-    @Arg("email") email: string,
-    @Arg("password") password: string
+    @Arg("input") { email, password }: LoginInput
   ) {
-    const user = await this.UserRepository.findOne(email);
+    const user = await this.UserRepository.findOne({
+      email,
+      password,
+      active: true,
+    });
     if (user) {
-      if (user.password === password) {
-        await login(user);
-        return user;
-      }
+      await login(user);
+      return user;
     }
     throw new Error(WRONG_INFO);
   }
@@ -47,9 +49,7 @@ export class AuthResolver {
   @Mutation(() => User, { nullable: true })
   async sign_up(
     @Ctx() { login }: IContext,
-    @Arg("email") email: string,
-    @Arg("password") password: string,
-    @Arg("name") name: string
+    @Arg("input") { email, password, name }: SignUpInput
   ) {
     try {
       let user = await this.UserRepository.findOne(email);
@@ -58,8 +58,16 @@ export class AuthResolver {
         user = this.UserRepository.create({
           email,
           password,
-          name
+          name,
         });
+        await this.UserRepository.save(user);
+        await login(user);
+        return user;
+      } else if (!user.active) {
+        user.active = true;
+        user.email = email;
+        user.password = password;
+        user.name = name;
         await this.UserRepository.save(user);
         await login(user);
         return user;

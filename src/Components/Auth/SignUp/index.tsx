@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Form, Header, Input, Label } from "semantic-ui-react";
 import sha512 from "crypto-js/sha512";
 import { useMutation } from "@apollo/react-hooks";
-
+import { isEmail } from "validator";
 import { ErrorGQLAlert } from "../../ErrorGQLAlert";
 import { CURRENT_USER, SIGN_UP } from "../../../graphql/auth";
 
@@ -24,12 +24,16 @@ const SignUp: FC = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
+  const invalidData = !isEmail(email) || !name || !password;
+
   return (
     <Form
       onSubmit={(ev) => {
         ev.preventDefault();
         signUp({
-          variables: { email, password: sha512(password).toString(), name },
+          variables: {
+            input: { email, password: sha512(password).toString(), name },
+          },
         });
       }}
     >
@@ -52,7 +56,11 @@ const SignUp: FC = () => {
           name="name"
           type="text"
           value={name}
-          onChange={(_e, { value }) => setName(value)}
+          onChange={(_e, { value }) => {
+            if (value.length <= 50) {
+              setName(value);
+            }
+          }}
           disabled={loading}
         />
       </Form.Field>
@@ -66,7 +74,12 @@ const SignUp: FC = () => {
           disabled={loading}
         />
       </Form.Field>
-      <Form.Button type="submit" positive disabled={loading} loading={loading}>
+      <Form.Button
+        type="submit"
+        positive
+        disabled={loading || invalidData}
+        loading={loading}
+      >
         Sign Up
       </Form.Button>
     </Form>

@@ -1,5 +1,6 @@
-import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Field, ObjectType, InputType } from "type-graphql";
+import { Column, Entity, PrimaryColumn, Index } from "typeorm";
+import { IsEmail, Length } from "class-validator";
 
 @Entity()
 @ObjectType()
@@ -17,5 +18,24 @@ export class User {
 
   @Field()
   @Column({ default: false })
+  admin: boolean;
+
+  @Field()
+  @Index()
+  @Column({ default: true })
+  active: boolean;
+}
+
+@InputType()
+export class UpdateUserInput {
+  @IsEmail()
+  @Field()
+  email: string;
+
+  @Length(1, 50)
+  @Field()
+  name: string;
+
+  @Field()
   admin: boolean;
 }

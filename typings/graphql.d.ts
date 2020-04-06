@@ -23,6 +23,11 @@ export type EditStoreInput = {
   image?: Maybe<Scalars['String']>;
 };
 
+export type LoginInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+};
+
 export type Mutation = {
    __typename?: 'Mutation';
   logout: Scalars['Boolean'];
@@ -34,19 +39,18 @@ export type Mutation = {
   upsertStore: Store;
   editStore: Store;
   removeStore: Store;
+  updateUser: User;
+  removeUser: Scalars['Boolean'];
 };
 
 
 export type MutationLoginArgs = {
-  password: Scalars['String'];
-  email: Scalars['String'];
+  input: LoginInput;
 };
 
 
 export type MutationSign_UpArgs = {
-  name: Scalars['String'];
-  password: Scalars['String'];
-  email: Scalars['String'];
+  input: SignUpInput;
 };
 
 
@@ -78,6 +82,16 @@ export type MutationEditStoreArgs = {
 
 export type MutationRemoveStoreArgs = {
   storeName: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  user: UpdateUserInput;
+};
+
+
+export type MutationRemoveUserArgs = {
+  email: Scalars['String'];
 };
 
 export type Product = {
@@ -113,6 +127,12 @@ export type QuotationCreate = {
   name: Scalars['String'];
 };
 
+export type SignUpInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type Store = {
    __typename?: 'Store';
   name: Scalars['String'];
@@ -121,9 +141,16 @@ export type Store = {
   active: Scalars['Boolean'];
 };
 
+export type UpdateUserInput = {
+  email: Scalars['String'];
+  name: Scalars['String'];
+  admin: Scalars['Boolean'];
+};
+
 export type User = {
    __typename?: 'User';
   email: Scalars['String'];
   name: Scalars['String'];
   admin: Scalars['Boolean'];
+  active: Scalars['Boolean'];
 };
