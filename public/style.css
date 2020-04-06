@@ -2,6 +2,15 @@ th:not(.center) {
   padding-left: 5px;
 }
 
+a.icon {
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+body {
+  height: 100vh;
+}
+
 .pointer {
   cursor: pointer;
 }

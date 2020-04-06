@@ -25,7 +25,7 @@ const Index: NextPage = () => {
   }, [called, loading, data]);
 
   return (
-    <Stack>
+    <Stack pt={10}>
       <Box>
         <Stack
           isInline

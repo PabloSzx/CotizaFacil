@@ -13,6 +13,7 @@ import { theme, ThemeProvider } from "@chakra-ui/core";
 import { AuthProvider } from "../src/Context/Auth";
 import { Navigation } from "../src/Components/Navigation";
 import { withApollo } from "../src/utils";
+import { Footer } from "../src/Components/Footer";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -32,6 +33,7 @@ class MyApp extends App<{ apollo: ApolloClient<any> }> {
             <Navigation />
 
             <Component {...pageProps} />
+            <Footer />
           </AuthProvider>
         </ThemeProvider>
       </ApolloProvider>

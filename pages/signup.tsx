@@ -6,7 +6,7 @@ import SignUp from "../src/Components/Auth/SignUp";
 
 const SignUpPage: NextPage = () => {
   return (
-    <Stack padding="10px">
+    <Stack padding="50px">
       <SignUp />
     </Stack>
   );

@@ -6,7 +6,7 @@ import Login from "../src/Components/Auth/Login";
 
 const LoginPage: NextPage = () => {
   return (
-    <Stack padding="10px">
+    <Stack padding="3em" bg="teal.500">
       <Login />
     </Stack>
   );
