@@ -1,12 +1,9 @@
 import { uniqBy } from "lodash";
-import puppeteer from "puppeteer";
 
 import { IProduct } from "../interfaces";
+import { createBrowserInstance } from "./utils";
 
-const browser = puppeteer.launch({
-  executablePath: process.env.CHROME_BIN,
-  args: ["--no-sandbox"]
-});
+const browser = createBrowserInstance();
 
 const pageLimit = 2;
 
@@ -14,7 +11,7 @@ const sodimacWebsite = "https://www.sodimac.cl";
 
 const sodimacUrl = ({
   name,
-  pageNumber
+  pageNumber,
 }: {
   name: string;
   pageNumber: number;
@@ -31,7 +28,7 @@ export const getSodimacData = async (name: string) => {
     await page.goto(
       sodimacUrl({
         name,
-        pageNumber
+        pageNumber,
       })
     );
 
@@ -50,7 +47,7 @@ export const getSodimacData = async (name: string) => {
       );
 
       let log = "";
-      $products.forEach($product => {
+      $products.forEach(($product) => {
         const titleSelector = $product.querySelector(
           ".product #title-pdp-link"
         );
@@ -72,7 +69,7 @@ export const getSodimacData = async (name: string) => {
           name: titleSelector.textContent?.trim() ?? "",
           price: priceSelector.textContent?.trim() ?? "",
           url: linkSelector.getAttribute("href") ?? "",
-          image: imageSelector.getAttribute("src") ?? ""
+          image: imageSelector.getAttribute("src") ?? "",
         };
 
         if (
@@ -83,7 +80,7 @@ export const getSodimacData = async (name: string) => {
         ) {
           products.push({
             ...productData,
-            url: `https://www.sodimac.cl${productData.url}`
+            url: `https://www.sodimac.cl${productData.url}`,
           });
         }
       });
@@ -91,7 +88,7 @@ export const getSodimacData = async (name: string) => {
       return {
         totalPages,
         products,
-        log
+        log,
       };
     });
 
@@ -108,7 +105,7 @@ export const getSodimacData = async (name: string) => {
 
   await page.close();
 
-  const uniqProducts = uniqBy(products, product => product.url);
+  const uniqProducts = uniqBy(products, (product) => product.url);
 
   return uniqProducts;
 };

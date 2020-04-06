@@ -15,6 +15,7 @@
     "dev-api": "shx rm -rf ./api/dist && tsc-watch -P tsconfig.local.json --onSuccess \"yarn api-run\" --onCompilationComplete \"yarn graphql-codegen\"",
     "dev-client": "wait-on tcp:4000 && next",
     "graphql-codegen": "wait-on tcp:4000 && graphql-codegen",
+    "kill": "kill-port 9999 && kill-port 4000 && kill-port 3000",
     "start": "cross-env NODE_ENV=production run-p start-*",
     "start-api": "node ./api/dist/api/server.js",
     "start-client": "next start -p 6001",

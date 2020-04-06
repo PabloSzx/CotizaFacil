@@ -1,12 +1,9 @@
 import { uniqBy } from "lodash";
-import puppeteer from "puppeteer";
 
 import { IProduct } from "../interfaces";
+import { createBrowserInstance } from "./utils";
 
-const browser = puppeteer.launch({
-  executablePath: process.env.CHROME_BIN,
-  args: ["--no-sandbox"]
-});
+const browser = createBrowserInstance();
 
 const pageLimit = 2;
 
@@ -24,18 +21,18 @@ export const getEasyData = async (name: string) => {
   const getPageData = async () => {
     await page.goto(
       easyUrl({
-        name
+        name,
       })
     );
 
     const data = await page.evaluate(async () => {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const $products = document.querySelectorAll(".product");
       let log = "";
 
       const products: IProduct[] = [];
 
-      $products.forEach($product => {
+      $products.forEach(($product) => {
         const titleSelector = $product.querySelector(
           ".product_info .product_name"
         );
@@ -58,7 +55,7 @@ export const getEasyData = async (name: string) => {
           url: titleSelector.getAttribute("href") ?? "",
           image:
             imageSelector.getElementsByTagName("img")[0]?.getAttribute("src") ??
-            ""
+            "",
         };
 
         log += ``;
@@ -71,14 +68,14 @@ export const getEasyData = async (name: string) => {
         ) {
           products.push({
             ...productData,
-            url: `https://www.easy.cl${productData.url}`
+            url: `https://www.easy.cl${productData.url}`,
           });
         }
       });
 
       return {
         products,
-        log
+        log,
       };
     });
 
@@ -91,7 +88,7 @@ export const getEasyData = async (name: string) => {
 
   await page.close();
 
-  const uniqProducts = uniqBy(products, product => product.url);
+  const uniqProducts = uniqBy(products, (product) => product.url);
 
   return uniqProducts;
 };
