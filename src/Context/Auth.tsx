@@ -1,6 +1,5 @@
 import { ApolloError } from "apollo-client";
-import gql from "graphql-tag";
-import { DocumentNode } from "graphql-tag-ts";
+
 import {
   createContext,
   FC,
@@ -11,12 +10,7 @@ import {
 } from "react";
 
 import { useMutation, useQuery } from "@apollo/react-hooks";
-
-export type IAuthenticatedUser = {
-  email: string;
-  name: string;
-  admin: boolean;
-};
+import { CURRENT_USER, IAuthenticatedUser, LOGOUT } from "../graphql/auth";
 
 export const AuthContext = createContext<{
   user: IAuthenticatedUser | null;
@@ -28,20 +22,8 @@ export const AuthContext = createContext<{
   user: null,
   logout: async () => null,
   loading: true,
-  firstLoading: true
+  firstLoading: true,
 });
-
-export const currentUserGQL: DocumentNode<{
-  current_user: IAuthenticatedUser;
-}> = gql`
-  query {
-    current_user {
-      email
-      name
-      admin
-    }
-  }
-`;
 
 export const AuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<IAuthenticatedUser | null>(null);
@@ -51,31 +33,24 @@ export const AuthProvider: FC = ({ children }) => {
   const {
     loading: loadingCurrentUser,
     data,
-    error: errorCurrentUser
-  } = useQuery(currentUserGQL, {
-    ssr: false
+    error: errorCurrentUser,
+  } = useQuery(CURRENT_USER, {
+    ssr: false,
   });
 
   const [
     doLogout,
-    { loading: loadingLogout, error: errorLogout }
+    { loading: loadingLogout, error: errorLogout },
   ] = useMutation<{
     logout: boolean;
-  }>(
-    gql`
-      mutation {
-        logout
-      }
-    `,
-    {
-      update: cache => {
-        cache.writeQuery({
-          query: currentUserGQL,
-          data: { current_user: null }
-        });
-      }
-    }
-  );
+  }>(LOGOUT, {
+    update: (cache) => {
+      cache.writeQuery({
+        query: CURRENT_USER,
+        data: { current_user: null },
+      });
+    },
+  });
 
   useEffect(() => {
     const isLoading = loadingCurrentUser || loadingLogout;
@@ -86,14 +61,14 @@ export const AuthProvider: FC = ({ children }) => {
   }, [loadingCurrentUser, loadingLogout]);
 
   useEffect(() => {
-    if (!loadingCurrentUser && data) setUser(data.current_user);
+    if (!loadingCurrentUser && data?.current_user) setUser(data.current_user);
   }, [loadingCurrentUser, data]);
 
   const logout = useCallback(async () => {
     try {
       const { data, errors } = await doLogout();
       if (errors && errors.length > 0)
-        throw new Error(errors.map(v => v.message).join("|"));
+        throw new Error(errors.map((v) => v.message).join("|"));
       if (data && data.logout) setUser(null);
     } catch (err) {
       console.error(err);
@@ -109,7 +84,7 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         logout,
         error: errorCurrentUser || errorLogout,
-        ...stateRef.current
+        ...stateRef.current,
       }}
     >
       {children}

@@ -35,7 +35,7 @@ import {
 import { priceStringToNumber } from "../../shared/utils";
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { CREATE_QUOTATION, MY_QUOTATIONS } from "../graphql/quotation";
-import { AuthContext } from "./Auth/Context";
+import { AuthContext } from "../Context/Auth";
 import { Confirm } from "./Confirm";
 
 interface IDownloadQuotation {

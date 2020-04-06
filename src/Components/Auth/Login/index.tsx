@@ -1,46 +1,33 @@
-import gql, { DocumentNode } from "graphql-tag-ts";
 import { FC, useState } from "react";
 import { Form, Header, Input, Label } from "semantic-ui-react";
+import sha512 from "crypto-js/sha512";
 
 import { useMutation } from "@apollo/react-hooks";
 
 import { ErrorGQLAlert } from "../../ErrorGQLAlert";
-import { currentUserGQL, IAuthenticatedUser } from "../Context";
-
-const loginGQL: DocumentNode<
-  { login: IAuthenticatedUser },
-  { email: string; password: string }
-> = gql`
-  mutation($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      email
-      name
-      admin
-    }
-  }
-`;
+import { CURRENT_USER, LOGIN } from "../../../graphql/auth";
 
 const Login: FC = () => {
-  const [login, { loading, error }] = useMutation(loginGQL, {
+  const [login, { loading, error }] = useMutation(LOGIN, {
     update: (cache, data) => {
       if (data.data?.login) {
         cache.writeQuery({
-          query: currentUserGQL,
+          query: CURRENT_USER,
           data: {
-            current_user: data.data.login
-          }
+            current_user: data.data.login,
+          },
         });
       }
-    }
+    },
   });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
     <Form
-      onSubmit={ev => {
+      onSubmit={(ev) => {
         ev.preventDefault();
-        login({ variables: { email, password } });
+        login({ variables: { email, password: sha512(password).toString() } });
       }}
     >
       <Header as="h1">Login</Header>

@@ -44,6 +44,7 @@ type Product {
 
 type Query {
   allProducts: [Product!]!
+  allUsers: [User!]!
   current_user: User
   myQuotations: [Quotation!]!
   stores: [Store!]!

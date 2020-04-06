@@ -96,6 +96,7 @@ export type Query = {
   allProducts: Array<Product>;
   myQuotations: Array<Quotation>;
   stores: Array<Store>;
+  allUsers: Array<User>;
 };
 
 export type Quotation = {

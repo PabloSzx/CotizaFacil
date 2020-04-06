@@ -10,7 +10,7 @@ import NProgress from "nprogress";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { theme, ThemeProvider } from "@chakra-ui/core";
 
-import { AuthProvider } from "../src/Components/Auth/Context";
+import { AuthProvider } from "../src/Context/Auth";
 import { Navigation } from "../src/Components/Navigation";
 import { withApollo } from "../src/utils";
 

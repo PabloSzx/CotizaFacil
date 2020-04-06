@@ -123,7 +123,7 @@ export const ProductTable: FC<{ data: readonly IProductQuery[] }> = memo(
 
     return (
       <Flex justifyContent="center">
-        <Table collapsing compact selectable striped stackable sortable>
+        <Table celled collapsing compact selectable striped stackable sortable>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell

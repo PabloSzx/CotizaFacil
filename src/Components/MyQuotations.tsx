@@ -20,30 +20,30 @@ import {
 
 import { ProductSelectionStore } from "../Context/ProductSelection";
 import { MY_QUOTATIONS, REMOVE_QUOTATION } from "../graphql/quotation";
-import { AuthContext } from "./Auth/Context";
+import { AuthContext } from "../Context/Auth";
 import { Confirm } from "./Confirm";
 import { QuotationStore } from "./SaveQuotation";
 
-export const MyQuotations: FC<ButtonProps> = props => {
+export const MyQuotations: FC<ButtonProps> = (props) => {
   const { data, loading } = useQuery(MY_QUOTATIONS, {
     fetchPolicy: "cache-and-network",
-    notifyOnNetworkStatusChange: true
+    notifyOnNetworkStatusChange: true,
   });
   const dataRef = useRef<{ id?: number }>({});
   const [removeQuotation] = useMutation(REMOVE_QUOTATION, {
-    update: cache => {
+    update: (cache) => {
       if (data && dataRef?.current.id !== undefined) {
         cache.writeQuery({
           query: MY_QUOTATIONS,
           data: {
             ...data,
             myQuotations: data.myQuotations.filter(
-              quotation => quotation.id !== dataRef.current.id
-            )
-          }
+              (quotation) => quotation.id !== dataRef.current.id
+            ),
+          },
         });
       }
-    }
+    },
   });
   const disclosure = useDisclosure();
   const { user } = useContext(AuthContext);
@@ -89,7 +89,7 @@ export const MyQuotations: FC<ButtonProps> = props => {
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {data?.myQuotations.map(quotation => {
+                    {data?.myQuotations.map((quotation) => {
                       return (
                         <Table.Row key={quotation.id}>
                           <Table.Cell>{quotation.name}</Table.Cell>
@@ -99,7 +99,7 @@ export const MyQuotations: FC<ButtonProps> = props => {
                               "d 'de' MMMM 'del' yyyy HH:mm:ss (z)",
                               {
                                 timeZone: "America/Santiago",
-                                locale: es
+                                locale: es,
                               }
                             )}
                           </Table.Cell>
@@ -134,11 +134,11 @@ export const MyQuotations: FC<ButtonProps> = props => {
                                   dataRef.current.id = quotation.id;
                                   await removeQuotation({
                                     variables: {
-                                      quotation_id: quotation.id
+                                      quotation_id: quotation.id,
                                     },
                                     optimisticResponse: {
-                                      removeQuotation: true
-                                    }
+                                      removeQuotation: true,
+                                    },
                                   });
                                 }}
                               >

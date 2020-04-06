@@ -4,7 +4,7 @@ import { Button, Icon } from "semantic-ui-react";
 
 import { Box, Stack } from "@chakra-ui/core";
 
-import { AuthContext } from "../Auth/Context";
+import { AuthContext } from "../../Context/Auth";
 import { MyQuotations } from "../MyQuotations";
 
 export const Navigation: FC = () => {
@@ -23,10 +23,12 @@ export const Navigation: FC = () => {
     }
   }, [user, Router?.pathname]);
 
+  const showMyQuotations = user && Router.pathname === "/";
+
   return (
     <Stack
       isInline
-      justifyContent={user ? "space-between" : "flex-end"}
+      justifyContent={showMyQuotations ? "space-between" : "flex-end"}
       alignContent="space-around"
       padding="10px"
       marginBottom="15px"
@@ -34,7 +36,7 @@ export const Navigation: FC = () => {
       shouldWrapChildren
       spacing="10px"
     >
-      {user && (
+      {showMyQuotations && (
         <Box m={1}>
           <MyQuotations />
         </Box>
