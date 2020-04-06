@@ -31,10 +31,11 @@ export const SearchProduct: FC<{
         ev.preventDefault();
         setLoading(true);
         NProgress.start();
+        setSearchInput((inputStr) => inputStr.trim());
         await searchProduct({
           variables: {
             storeNames: storesSelected,
-            productName: searchInput,
+            productName: searchInput.trim(),
           },
         });
         NProgress.done();
