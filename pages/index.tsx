@@ -21,7 +21,7 @@ const Index: NextPage = () => {
   }, [data]);
 
   return (
-    <Stack>
+    <Stack pt={10}>
       <Box>
         <Stack
           isInline
@@ -30,6 +30,7 @@ const Index: NextPage = () => {
           flexWrap="wrap"
           alignItems="center"
           spacing={0}
+
         >
           <Box m={1} className="48">
             <SearchProduct searchProduct={searchProduct} />

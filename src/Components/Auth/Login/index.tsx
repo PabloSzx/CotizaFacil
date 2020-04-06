@@ -1,6 +1,6 @@
 import gql, { DocumentNode } from "graphql-tag-ts";
 import { FC, useState } from "react";
-import { Form, Header, Input, Label } from "semantic-ui-react";
+import { Form, Header, Container, Divider,Grid, Segment, Message } from "semantic-ui-react";
 
 import { useMutation } from "@apollo/react-hooks";
 
@@ -37,39 +37,72 @@ const Login: FC = () => {
   const [password, setPassword] = useState("");
 
   return (
-    <Form
-      onSubmit={ev => {
-        ev.preventDefault();
-        login({ variables: { email, password } });
-      }}
-    >
-      <Header as="h1">Login</Header>
+    <Container textAlign="center"  >
+      <Grid textAlign='center' style={{ height: '60vh' }} verticalAlign='middle'>
+        <Grid.Column style={{ maxWidth: 450 }} >
+          <Header as='h1' color="black" textAlign='center' inverted>
+            Login
+            {/* <Image src='/logo.png' /> Log-in to your account */}
+          </Header>
 
-      <ErrorGQLAlert error={error} />
-      <Form.Field>
-        <Label>Email</Label>
-        <Input
-          name="email"
-          type="email"
-          value={email}
-          onChange={(_e, { value }) => setEmail(value)}
-          disabled={loading}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Label>Password</Label>
-        <Input
-          name="password"
-          value={password}
-          type="password"
-          onChange={(_e, { value }) => setPassword(value)}
-          disabled={loading}
-        />
-      </Form.Field>
-      <Form.Button type="submit" positive disabled={loading} loading={loading}>
-        Login
-      </Form.Button>
-    </Form>
+          <Form 
+            size='large' 
+            onSubmit={ev => {
+                ev.preventDefault();
+                login({ variables: { email, password } });
+          }}>
+            <Segment stacked>
+              <Divider hidden />
+              <ErrorGQLAlert error={error} />
+              <Form.Field>
+                {/* <Label>Email</Label> */}
+                <Form.Input
+                  name="email"
+                  type="email"
+                  fluid 
+                  value={email}
+                  onChange={(_e, { value }) => setEmail(value)}
+                  disabled={loading}
+                  icon='mail'
+                  iconPosition='left'
+                  placeholder='Email'
+                  label='Email'
+                />
+              </Form.Field>
+              <Divider hidden />              
+
+              <Form.Field>
+                {/* <Label>Password</Label> */}
+                <Form.Input
+                  fluid
+                  name='password'
+                  label='Password'
+                  icon='lock'
+                  iconPosition='left'
+                  placeholder='Password'
+                  value={password}
+                  type='password'
+                  onChange={(_e, { value }) => setPassword(value)}
+                  disabled={loading}
+                />
+              </Form.Field>
+              <Divider hidden />
+              {/* <Button color='teal' fluid size='large'>
+                Login
+              </Button> */}
+
+              <Form.Button type="submit"  fluid size='large' positive disabled={loading} loading={loading}>
+                Login
+              </Form.Button>
+            </Segment>
+          </Form>
+
+          <Message>
+            ¿Eres nuevo? <a href='#'>Registrate</a>
+          </Message>
+        </Grid.Column>
+      </Grid>
+    </Container>    
   );
 };
 

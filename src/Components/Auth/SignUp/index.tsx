@@ -1,6 +1,6 @@
 import gql, { DocumentNode } from "graphql-tag-ts";
 import { FC, useState } from "react";
-import { Form, Header, Input, Label } from "semantic-ui-react";
+import { Form, Header, Container, Divider,Grid, Segment, Message } from "semantic-ui-react";
 
 import { useMutation } from "@apollo/react-hooks";
 
@@ -38,49 +38,78 @@ const SignUp: FC = () => {
   const [password, setPassword] = useState("");
 
   return (
-    <Form
-      onSubmit={ev => {
-        ev.preventDefault();
-        signUp({ variables: { email, password, name } });
-      }}
-    >
-      <Header as="h1">Sign Up</Header>
+    <Container textAlign='center'>
+      <Grid textAlign='center' style={{ height: '60vh' }} verticalAlign='middle'>
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Header as="h1" color='teal' textAlign='center'>Registro</Header>
 
-      <ErrorGQLAlert error={error} />
-      <Form.Field>
-        <Label>Email</Label>
-        <Input
-          name="email"
-          type="email"
-          value={email}
-          onChange={(_e, { value }) => setEmail(value)}
-          disabled={loading}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Label>Name</Label>
-        <Input
-          name="name"
-          type="text"
-          value={name}
-          onChange={(_e, { value }) => setName(value)}
-          disabled={loading}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Label>Password</Label>
-        <Input
-          name="password"
-          value={password}
-          type="password"
-          onChange={(_e, { value }) => setPassword(value)}
-          disabled={loading}
-        />
-      </Form.Field>
-      <Form.Button type="submit" positive disabled={loading} loading={loading}>
-        Sign Up
-      </Form.Button>
-    </Form>
+          <Form 
+            size='large'
+            onSubmit={ev => {
+              ev.preventDefault();
+              signUp({ variables: { email, password, name } });
+            }}
+          >
+            <Segment stacked>
+              <Divider hidden />
+              <ErrorGQLAlert error={error} />
+              <Form.Field>
+                <Form.Input
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(_e, { value }) => setEmail(value)}
+                  disabled={loading}
+                  fluid
+                  icon='mail'
+                  iconPosition='left'
+                  placeholder='Email'
+                  label='Email'
+                />
+              </Form.Field>
+              <Divider hidden />
+              <Form.Field>
+                <Form.Input
+                  name="name"
+                  type="text"
+                  value={name}
+                  onChange={(_e, { value }) => setName(value)}
+                  disabled={loading}
+                  fluid
+                  icon='user'
+                  iconPosition='left'
+                  placeholder='Nombre'
+                  label='Nombre'
+                />
+              </Form.Field>
+              <Divider hidden />
+              <Form.Field>
+                <Form.Input
+                  name="password"
+                  value={password}
+                  type="password"
+                  onChange={(_e, { value }) => setPassword(value)}
+                  disabled={loading}
+                  fluid
+                  icon='lock'
+                  iconPosition='left'
+                  placeholder='Password'
+                  label='Password'
+                />
+              </Form.Field>
+              <Divider hidden />
+              <Form.Button  type="submit"  fluid size='large' positive disabled={loading} loading={loading}>
+              Registrarse
+              </Form.Button>
+              <Divider hidden />
+            </Segment>
+          </Form>
+          <Message>
+            ¿Ya estás registrado? <a href='#'>Ingresa</a>
+          </Message>
+        </Grid.Column>    
+      </Grid>    
+    </Container>
   );
 };
 
