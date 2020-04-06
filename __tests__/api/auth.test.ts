@@ -1,7 +1,8 @@
-import gql from "graphql-tag";
 import { generate } from "randomstring";
-
+import SHA512 from "crypto-js/sha512";
 import { GRAPHQL_URL, GraphQLClient } from "../helpers";
+import { SIGN_UP, LOGOUT, CURRENT_USER, LOGIN } from "../../src/graphql/auth";
+import { MutationSign_UpArgs, MutationLoginArgs } from "../../typings/graphql";
 
 const toCleanID = "clean_this";
 
@@ -9,38 +10,22 @@ describe("Auth API", () => {
   it("should logout", async () => {
     const LocalAPI = new GraphQLClient(GRAPHQL_URL);
 
-    const { logout } = await LocalAPI.request<{ logout: boolean }>(gql`
-      mutation {
-        logout
-      }
-    `);
+    const { logout } = await LocalAPI.request<{ logout: boolean }>(LOGOUT);
 
     expect(logout).toBe(false);
   });
   it("should sign_up, logout, login and get current_user", async () => {
     const LocalAPI = new GraphQLClient(GRAPHQL_URL);
 
-    const { logout: logout0 } = await LocalAPI.request<{ logout: boolean }>(gql`
-      mutation {
-        logout
-      }
-    `);
+    const { logout: logout0 } = await LocalAPI.request<{ logout: boolean }>(
+      LOGOUT
+    );
 
     expect(logout0).toBeDefined();
 
     const { current_user: current_user1 } = await LocalAPI.request<{
       current_user: null;
-    }>(
-      gql`
-        query {
-          current_user {
-            email
-            name
-            admin
-          }
-        }
-      `
-    );
+    }>(CURRENT_USER);
 
     expect(current_user1).toBe(null);
 
@@ -48,19 +33,14 @@ describe("Auth API", () => {
 
     const { sign_up } = await LocalAPI.request<
       { sign_up: { email: string; name: string; admin: boolean } },
-      { email: string; password: string; name: string }
-    >(
-      gql`
-        mutation($email: String!, $password: String!, $name: String!) {
-          sign_up(email: $email, password: $password, name: $name) {
-            email
-            name
-            admin
-          }
-        }
-      `,
-      { email: generatedEmail, password: "password", name: toCleanID }
-    );
+      MutationSign_UpArgs
+    >(SIGN_UP, {
+      input: {
+        email: generatedEmail,
+        password: SHA512("password").toString(),
+        name: toCleanID,
+      },
+    });
 
     expect(sign_up.email).toBe(generatedEmail);
     expect(sign_up.name).toBe(toCleanID);
@@ -68,67 +48,33 @@ describe("Auth API", () => {
 
     const { current_user: current_user2 } = await LocalAPI.request<{
       current_user: { email: string; name: string; admin: boolean };
-    }>(
-      gql`
-        query {
-          current_user {
-            email
-            name
-            admin
-          }
-        }
-      `
-    );
+    }>(CURRENT_USER);
 
     expect(current_user2.email).toBe(generatedEmail);
     expect(current_user2.name).toBe(toCleanID);
     expect(current_user2.admin).toBe(false);
 
-    const { logout: logout1 } = await LocalAPI.request<{ logout: boolean }>(gql`
-      mutation {
-        logout
-      }
-    `);
+    const { logout: logout1 } = await LocalAPI.request<{ logout: boolean }>(
+      LOGOUT
+    );
 
     expect(logout1).toBe(true);
 
     const { current_user: current_user3 } = await LocalAPI.request<{
       current_user: null;
-    }>(
-      gql`
-        query {
-          current_user {
-            email
-            name
-            admin
-          }
-        }
-      `
-    );
+    }>(CURRENT_USER);
 
     expect(current_user3).toBe(null);
 
     const { login } = await LocalAPI.request<
       { login: { email: string; name: string; admin: boolean } },
-      {
-        email: string;
-        password: string;
-      }
-    >(
-      gql`
-        mutation($email: String!, $password: String!) {
-          login(email: $email, password: $password) {
-            email
-            name
-            admin
-          }
-        }
-      `,
-      {
+      MutationLoginArgs
+    >(LOGIN, {
+      input: {
         email: generatedEmail,
-        password: "password",
-      }
-    );
+        password: SHA512("password").toString(),
+      },
+    });
 
     expect(login.email).toBe(generatedEmail);
     expect(login.name).toBe(toCleanID);
@@ -136,35 +82,21 @@ describe("Auth API", () => {
 
     const { current_user: current_user4 } = await LocalAPI.request<{
       current_user: { email: string; name: string; admin: boolean };
-    }>(
-      gql`
-        query {
-          current_user {
-            email
-            name
-            admin
-          }
-        }
-      `
-    );
+    }>(CURRENT_USER);
 
     expect(current_user4.email).toBe(generatedEmail);
     expect(current_user4.name).toBe(toCleanID);
     expect(current_user4.admin).toBe(false);
 
-    const { logout: logout2 } = await LocalAPI.request<{ logout: boolean }>(gql`
-      mutation {
-        logout
-      }
-    `);
+    const { logout: logout2 } = await LocalAPI.request<{ logout: boolean }>(
+      LOGOUT
+    );
 
     expect(logout2).toBe(true);
 
-    const { logout: logout3 } = await LocalAPI.request<{ logout: boolean }>(gql`
-      mutation {
-        logout
-      }
-    `);
+    const { logout: logout3 } = await LocalAPI.request<{ logout: boolean }>(
+      LOGOUT
+    );
 
     expect(logout3).toBe(false);
   }, 30000);
