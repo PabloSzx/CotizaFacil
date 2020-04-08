@@ -113,7 +113,13 @@ const UserModal: FC<{
   return (
     <>
       {children(onOpen)}
-      <Modal isOpen={isOpen} onClose={onClose} size="fit-content">
+      <Modal
+        blockScrollOnMount
+        scrollBehavior="inside"
+        isOpen={isOpen}
+        onClose={onClose}
+        size="fit-content"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>

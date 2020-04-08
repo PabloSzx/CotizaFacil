@@ -9,7 +9,7 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  useDisclosure,
+  useDisclosure
 } from "@chakra-ui/core";
 
 import { ProductSelectionStore } from "../Context/ProductSelection";
@@ -53,7 +53,12 @@ export const StoreSelection: FC = memo(() => {
         <Icon name="shop" />
         Tiendas Seleccionadas
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} preserveScrollBarGap>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        preserveScrollBarGap
+        blockScrollOnMount
+      >
         <ModalOverlay />
         <ModalContent>
           <Stack padding="20px">
