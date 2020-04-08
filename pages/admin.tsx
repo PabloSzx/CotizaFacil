@@ -4,7 +4,7 @@ import {
   ALL_USERS,
   IUser,
   UPDATE_USER,
-  REMOVE_USER,
+  REMOVE_USER
 } from "../src/graphql/admin";
 import {
   Stack,
@@ -19,7 +19,7 @@ import {
   Checkbox,
   Button,
   Text,
-  ModalHeader,
+  ModalHeader
 } from "@chakra-ui/core";
 import { Table, Icon } from "semantic-ui-react";
 import { FC, memo, useContext, useEffect, useState, ChangeEvent } from "react";
@@ -28,6 +28,11 @@ import Router from "next/router";
 import { Confirm } from "../src/Components/Confirm";
 import { ErrorGQLAlert } from "../src/Components/ErrorGQLAlert";
 import { CURRENT_USER } from "../src/graphql/auth";
+import { useUpdateEffect } from "react-use";
+import ms from "ms";
+import { usePagination } from "../src/utils/pagination";
+
+const THIRTY_SECS = ms("30 seconds");
 
 const UserModal: FC<{
   user: IUser;
@@ -43,59 +48,67 @@ const UserModal: FC<{
           cache.writeQuery({
             query: CURRENT_USER,
             data: {
-              current_user: data.updateUser,
-            },
+              current_user: data.updateUser
+            }
           });
         }
         const dataAllUsers = cache.readQuery<{
           allUsers: IUser[];
         }>({
-          query: ALL_USERS,
+          query: ALL_USERS
         });
 
         cache.writeQuery({
           query: ALL_USERS,
           data: {
-            allUsers: dataAllUsers?.allUsers.map((user) => {
+            allUsers: dataAllUsers?.allUsers.map(user => {
               if (user.email === data?.updateUser.email) {
                 return data?.updateUser;
               }
               return user;
-            }),
-          },
+            })
+          }
         });
       }
     },
+    refetchQueries: [
+      {
+        query: ALL_USERS
+      }
+    ]
   });
   const [removeUser, dataRemoveUser] = useMutation(REMOVE_USER, {
     variables: {
-      email: user.email,
+      email: user.email
     },
     update: (cache, { data }) => {
       if (data?.removeUser) {
         const dataAllUsers = cache.readQuery<{
           allUsers: IUser[];
         }>({
-          query: ALL_USERS,
+          query: ALL_USERS
         });
 
         cache.writeQuery({
           query: ALL_USERS,
           data: {
-            allUsers: dataAllUsers?.allUsers.filter((userValue) => {
+            allUsers: dataAllUsers?.allUsers.filter(userValue => {
               return userValue.email !== user.email;
-            }),
-          },
+            })
+          }
         });
       }
-    },
+    }
   });
   const [name, setName] = useState(user.name);
   const [admin, setAdmin] = useState(user.admin);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     setName(user.name);
   }, [user.name]);
+  useUpdateEffect(() => {
+    setAdmin(user.admin);
+  }, [user.admin]);
 
   return (
     <>
@@ -121,7 +134,7 @@ const UserModal: FC<{
                   type="text"
                   value={name}
                   onChange={({
-                    target: { value },
+                    target: { value }
                   }: ChangeEvent<HTMLInputElement>) => {
                     if (value.length <= 50) {
                       setName(value);
@@ -137,7 +150,7 @@ const UserModal: FC<{
                   isChecked={admin}
                   isDisabled={authenticatedUser?.email === user.email}
                   onChange={() => {
-                    setAdmin((admin) => !admin);
+                    setAdmin(admin => !admin);
                   }}
                   padding="10px"
                 >
@@ -153,9 +166,9 @@ const UserModal: FC<{
                         user: {
                           email: user.email,
                           name,
-                          admin,
-                        },
-                      },
+                          admin
+                        }
+                      }
                     });
                   }}
                   isDisabled={
@@ -200,7 +213,7 @@ const UserRow: FC<{ user: IUser }> = memo(({ user }) => {
   const { email, name, admin } = user;
   return (
     <UserModal user={user}>
-      {(openModal) => {
+      {openModal => {
         return (
           <Table.Row
             className="pointer"
@@ -224,6 +237,7 @@ const AdminPage: NextPage = () => {
   const { user, firstLoading } = useContext(AuthContext);
   const { data, loading } = useQuery(ALL_USERS, {
     skip: !user?.admin,
+    pollInterval: THIRTY_SECS
   });
 
   useEffect(() => {
@@ -232,24 +246,38 @@ const AdminPage: NextPage = () => {
     }
   }, [firstLoading, user]);
 
+  const { selectedData, pagination } = usePagination({
+    name: "CotizaFacilAdminUsersPagination",
+    data: data?.allUsers
+  });
+
   return (
-    <Stack>
+    <Stack
+      padding="10px"
+      shouldWrapChildren
+      spacing="10px"
+      justify="center"
+      align="center"
+    >
       {(loading || !user?.admin) && <Spinner size="xl" alignSelf="center" />}
       {user?.admin && (
-        <Table celled selectable sortable stackable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Email</Table.HeaderCell>
-              <Table.HeaderCell>Nombre</Table.HeaderCell>
-              <Table.HeaderCell>Admin</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {data?.allUsers.map((user) => {
-              return <UserRow key={user.email} user={user} />;
-            })}
-          </Table.Body>
-        </Table>
+        <>
+          <Box textAlign="center">{pagination}</Box>
+          <Table celled selectable stackable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Email</Table.HeaderCell>
+                <Table.HeaderCell>Nombre</Table.HeaderCell>
+                <Table.HeaderCell>Admin</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {selectedData.map(user => {
+                return <UserRow key={user.email} user={user} />;
+              })}
+            </Table.Body>
+          </Table>
+        </>
       )}
     </Stack>
   );

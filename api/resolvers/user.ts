@@ -15,7 +15,12 @@ export class UserResolver {
   @Authorized([ADMIN])
   @Query(() => [User])
   async allUsers() {
-    return await this.UserRepository.find({});
+    return await this.UserRepository.find({
+      order: {
+        admin: "DESC",
+        email: "ASC"
+      }
+    });
   }
 
   @Authorized([ADMIN])
@@ -44,7 +49,7 @@ export class UserResolver {
     if (email !== authenticatedUser.email) {
       const user = await this.UserRepository.findOne({
         email,
-        active: true,
+        active: true
       });
       if (user) {
         user.active = false;
