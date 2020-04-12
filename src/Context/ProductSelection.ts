@@ -25,7 +25,7 @@ const initialProductSelection: IProductSelection = {
   productsChecked: {},
   storesSelected: {},
   productsInfo: {},
-  productsData: [],
+  productsData: []
 };
 
 export const ProductSelectionStore = createStore(initialProductSelection, {
@@ -42,15 +42,16 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
     },
     useProductsKeysSelected: createSelector(
       ({ productsChecked }) => productsChecked,
-      (productsChecked) => {
+      productsChecked => {
         return Object.keys(productsChecked);
       }
     ),
+    useProductsSelected: ({ productsChecked }) => productsChecked,
     useStoresSelected: createSelector(
       ({ storesSelected }) => {
         return storesSelected;
       },
-      (storesSelected) => {
+      storesSelected => {
         return Object.keys(storesSelected);
       }
     ),
@@ -65,47 +66,47 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
     ),
     useProductsData: ({ productsData }) => {
       return productsData;
-    },
+    }
   },
   actions: {
-    setInitialSelectedStores: (stores: string[]) => (draft) => {
+    setInitialSelectedStores: (stores: string[]) => draft => {
       if (size(draft.storesSelected) === 0) {
         for (const store of stores) {
           draft.storesSelected[store] = true;
         }
       }
     },
-    toggleProductSelected: (product: string) => (draft) => {
+    toggleProductSelected: (product: string) => draft => {
       if (draft.productsChecked[product]) {
         delete draft.productsChecked[product];
       } else {
         draft.productsChecked[product] = true;
       }
     },
-    toggleStoreSelected: (product: string) => (draft) => {
+    toggleStoreSelected: (product: string) => draft => {
       if (draft.storesSelected[product]) {
         delete draft.storesSelected[product];
       } else {
         draft.storesSelected[product] = true;
       }
     },
-    setProductsInfo: (products: IProductQuery[]) => (draft) => {
+    setProductsInfo: (products: IProductQuery[]) => draft => {
       draft.productsData = products;
       draft.productsInfo = {
         ...draft.productsInfo,
         ...products.reduce<Record<string, IProductQuery>>((acum, value) => {
           acum[value.url] = value;
           return acum;
-        }, {}),
+        }, {})
       };
     },
-    loadQuotationSelection: (products: IProductQuery[]) => (draft) => {
+    loadQuotationSelection: (products: IProductQuery[]) => draft => {
       draft.productsInfo = {
         ...draft.productsInfo,
         ...products.reduce<Record<string, IProductQuery>>((acum, value) => {
           acum[value.url] = value;
           return acum;
-        }, {}),
+        }, {})
       };
       draft.productsChecked = products.reduce<Record<string, true>>(
         (acum, value) => {
@@ -114,12 +115,12 @@ export const ProductSelectionStore = createStore(initialProductSelection, {
         },
         {}
       );
-    },
+    }
   },
   storagePersistence: {
     isActive: true,
     isSSR: true,
     persistenceKey: "ProductSelection",
-    debounceWait: 1000,
-  },
+    debounceWait: 1000
+  }
 });

@@ -68,6 +68,8 @@ export const ProductTable: FC<{ data: readonly IProductQuery[] }> = memo(
   ({ data }) => {
     const anyProductSelected = ProductSelectionStore.hooks.useAnyProductSelected();
 
+    const selectedProducts = ProductSelectionStore.hooks.useProductsSelected();
+
     const [columnSort, setColumnSort] = useRememberState<columnNames[]>(
       "CotizaFacilColumnSortProduct",
       []
@@ -78,14 +80,13 @@ export const ProductTable: FC<{ data: readonly IProductQuery[] }> = memo(
     >("CotizaFacilDirectionProductSort", undefined);
 
     const sortedDataList = useMemo(() => {
-      const selectedProducts = ProductSelectionStore.produce().productsChecked;
       return sortBy(
         data,
         columnSort.map(column => {
           return (product: IProductQuery) => {
             switch (column) {
               case "selected": {
-                return selectedProducts[product.url];
+                return selectedProducts[product.url] ? 1 : 0;
               }
               case "name": {
                 return product.name;
@@ -100,7 +101,7 @@ export const ProductTable: FC<{ data: readonly IProductQuery[] }> = memo(
           };
         })
       );
-    }, [data, columnSort]);
+    }, [data, columnSort, selectedProducts]);
 
     const sortedDataListWithDirection = useMemo(() => {
       if (directionSort === "descending") {
