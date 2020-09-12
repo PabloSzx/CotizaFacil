@@ -60,7 +60,7 @@
     "ms": "^2.1.2",
     "next": "^9.3.4",
     "next-with-apollo": "^5.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-notifier": "^6.0.0",
     "nprogress": "^0.2.0",
     "passport": "^0.4.1",
